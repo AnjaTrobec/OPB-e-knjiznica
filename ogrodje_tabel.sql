@@ -36,3 +36,9 @@ DROP TABLE IF EXISTS transakcija;
         datum DATE NOT NULL
         
  );
+
+
+--GRANT SELECT ON DATABASE sem2020_domenfb TO javnost;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
+GRANT INSERT ON ALL TABLES IN SCHEMA public TO javnost;
+GRANT DELETE ON  "public"."priljubljene" TO javnost;
