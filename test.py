@@ -2,7 +2,7 @@ from bottle import route, run, template
 
 @route('/')
 def index():
-    return 'Jakoba pa ni danes!'
+    return 'Ali dela?'
 
 @route('/')
 def banana():
