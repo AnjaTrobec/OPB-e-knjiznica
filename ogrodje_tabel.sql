@@ -1,23 +1,14 @@
 
-DROP TABLE IF EXISTS knjige;
+-- DROP TABLE IF EXISTS knjige;
+-- DROP TABLE IF EXISTS avtor;
+-- DROP TABLE IF EXISTS uporabnik;
+-- DROP TABLE IF EXISTS transakcija;
+-- DROP TABLE IF EXISTS ocena;
 
-    CREATE TABLE knjige (
-        -- id_knjige SERIAL PRIMARY KEY,
-        id_knjiga INTEGER,
-        ime_knjiga TEXT NOT NULL,
-        link TEXT,
-        id_avtor TEXT,
-        ime_avtor TEXT,
-        ocena TEXT NOT NULL,
-        stevilo_ocen REAL,
-        kljucna_ocena TEXT,
-        stevilo_kritik TEXT
-);
 
     CREATE TABLE avtor (
     id_avtorja SERIAL PRIMARY KEY,
-    ime TEXT NOT NULL,
-    priimek TEXT NOT NULL
+    ime TEXT NOT NULL
 );
     
     CREATE TABLE uporabnik (
@@ -29,11 +20,31 @@ DROP TABLE IF EXISTS knjige;
         email TEXT NOT NULL,
         narocnina INTEGER
 );
+
+
+    CREATE TABLE knjige (
+        id_knjige SERIAL PRIMARY KEY,
+        naslov TEXT NOT NULL,
+        id_avtorja INTEGER REFERENCES avtor(id_avtorja),
+        url_slike TEXT,
+        cena_nakupa REAL,
+        cena_izposoje REAL
+);
+
     CREATE TABLE transakcija(
         id_transakcije SERIAL PRIMARY KEY,
+        id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
+        id_knjige INTEGER REFERENCES knjige (id_knjige),
+        tip TEXT,
         datum DATE NOT NULL
         
  );
+
+     CREATE TABLE ocena(
+        id_uporabnika INTEGER REFERENCES uporabnik(id_uporabnika),
+        id_knjige INTEGER REFERENCES knjige(id_knjige),
+        ocena INTEGER
+);
 
 GRANT ALL ON DATABASE sem2021_anamarijab TO anjat;
 GRANT ALL ON SCHEMA public TO anjat;
