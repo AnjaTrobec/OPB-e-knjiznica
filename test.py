@@ -6,5 +6,5 @@ def index():
 
 @route('/')
 def banana():
-    return 'Poglejmo če deluje.'
+    return 'Oj.'
 run(host='localhost', port=8080, reloader=True)
