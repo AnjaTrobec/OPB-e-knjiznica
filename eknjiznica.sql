@@ -1,3 +1,5 @@
+ogrodje_tabel
+
 DROP TABLE IF EXISTS avtor;
 DROP TABLE IF EXISTS knjiga;
 DROP TABLE IF EXISTS uporabnik;
@@ -33,3 +35,12 @@ DROP TABLE IF EXISTS transakcija;
         datum DATE NOT NULL
         
  );
+<<<<<<< HEAD
+
+
+--GRANT SELECT ON DATABASE sem2020_domenfb TO javnost;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
+GRANT INSERT ON ALL TABLES IN SCHEMA public TO javnost;
+GRANT DELETE ON  "public"."priljubljene" TO javnost;
+=======
+>>>>>>> 8e3cac79ce03340b62e2b0ad64b19ec30231b988
