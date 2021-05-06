@@ -1,7 +1,4 @@
-
 import sqlite3
-import csv
-
 baza_datoteka = 'eknjiznica.db'
 
 def uvoziSQL(cur, datoteka):
@@ -23,7 +20,3 @@ with sqlite3.connect(baza_datoteka) as baza:
     uvoziCSV(cur, 'obdelani-podatki/avtorji')
     uvoziCSV(cur, 'obdelani-podatki/knjige')
     uvoziCSV(cur, 'obdelani-podatki/ocena')
-    
-    #with open('eknjiznica.sql') as f:
-      #  koda = f.read()
-       # c.executescript(koda)

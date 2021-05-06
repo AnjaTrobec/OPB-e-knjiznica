@@ -1,5 +1,3 @@
-ogrodje_tabel
-
 DROP TABLE IF EXISTS avtor;
 DROP TABLE IF EXISTS knjiga;
 DROP TABLE IF EXISTS uporabnik;
