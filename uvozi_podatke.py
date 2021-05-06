@@ -1,4 +1,3 @@
-
 import sqlite3
 baza_datoteka = 'eknjiznica.db'
 
