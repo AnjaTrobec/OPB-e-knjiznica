@@ -1,4 +1,4 @@
-db = 'sem2021_anamarijab'
+db = 'sem2021_anjat'
 host = 'baza.fmf.uni-lj.si'
-user = 'jakobz'
-password = 'cl73sknv'
+user = 'anjat'
+password = 'vroupybw'

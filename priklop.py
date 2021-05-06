@@ -1,4 +1,4 @@
-import psycopg2, psycopg2.extensions, psycopg2.extras
+import psycopg2, psycopg2.extensions, psycopg2.extras 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import csv
@@ -23,12 +23,7 @@ def uvoziCSV(cur, tabela):
 with psycopg2.connect(database=db, host=host, user=user, password=password) as con:
     cur = con.cursor()
     uvoziSQL(cur, 'ogrodje_tabel.sql')
-<<<<<<< HEAD
-    #uvoziCSV(cur, 'knjige')
-    # uvoziCSV(cur, 'agencije')
-    # uvoziNepremicnineCSV(cur, 'nepremicnine')
-    # uvoziCSV(cur, 'uporabniki')
-=======
-    # uvoziCSV(cur, 'knjige')
->>>>>>> 77e9d57cef166c5c375c96d7b287562bb2259f10
+    uvoziCSV(cur, 'test-avtor')
+    uvoziCSV(cur, 'test-knjiga')
+    uvoziCSV(cur, 'test-uporabnik')
     con.commit()
