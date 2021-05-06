@@ -23,8 +23,5 @@ def uvoziCSV(cur, tabela):
 with psycopg2.connect(database=db, host=host, user=user, password=password) as con:
     cur = con.cursor()
     uvoziSQL(cur, 'ogrodje_tabel.sql')
-    uvoziCSV(cur, 'knjige')
-    # uvoziCSV(cur, 'agencije')
-    # uvoziNepremicnineCSV(cur, 'nepremicnine')
-    # uvoziCSV(cur, 'uporabniki')
+    # uvoziCSV(cur, 'knjige')
     con.commit()
