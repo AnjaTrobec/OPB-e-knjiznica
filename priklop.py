@@ -38,8 +38,8 @@ def uvozi_knjigo(cur, tabela):
 
 with psycopg2.connect(database=db, host=host, user=user, password=password) as con:
     cur = con.cursor()
-    # uvoziSQL(cur, 'ogrodje_tabel.sql')
+    #uvoziSQL(cur, 'ogrodje_tabel.sql')
     uvoziCSV(cur, 'avtor')
-    uvoziCSV(cur, 'avtor')
+    uvoziCSV(cur, 'uporabnik')
     uvozi_knjigo(cur, 'knjige')
     con.commit()
