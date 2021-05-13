@@ -12,7 +12,7 @@ def uvoziSQL(cur, datoteka):
         cur.execute(skripta)
 
 def uvoziCSV(cur, tabela):
-    with open('obdelani-podatki/{0}.csv'.format(tabela), encoding='utf-8') as csvfile:
+    with open('testni-podatki/{0}.csv'.format(tabela), encoding='utf-8') as csvfile:
         podatki = csv.reader(csvfile)
         vsiPodatki = [vrstica for vrstica in podatki]
         glava = vsiPodatki[0]
@@ -20,10 +20,33 @@ def uvoziCSV(cur, tabela):
         cur.executemany("INSERT INTO {0} ({1}) VALUES ({2})".format(
         tabela, ",".join(glava), ",".join(['%s']*len(glava))), vrstice)
 
+def uvozi_knjigo(cur, tabela):
+    with open('testni-podatki/{0}.csv'.format(tabela), encoding='utf-8') as csvfile:
+        podatki = csv.reader(csvfile)
+        vsiPodatki = [vrstica for vrstica in podatki]
+        glava = vsiPodatki[0]
+        vrstice = vsiPodatki[1:]
+        for i in range(len(vrstice)):
+            avtor = vrstice[i][1]
+            cur.execute("SELECT id_avtorja FROM avtor WHERE ime = %s", [avtor])
+            try:
+                vrstice[i][1], = cur.fetchone()
+            except:
+                continue
+        cur.executemany("INSERT INTO {0} ({1}) VALUES ({2})".format(
+        tabela, ",".join(glava), ",".join(['%s']*len(glava))), vrstice)
+
 with psycopg2.connect(database=db, host=host, user=user, password=password) as con:
     cur = con.cursor()
+<<<<<<< HEAD
     uvoziSQL(cur, 'ogrodje_tabel.sql')
     uvoziCSV(cur, 'test-avtor')
     uvoziCSV(cur, 'test-knjiga')
     uvoziCSV(cur, 'test-uporabnik')
+=======
+    #uvoziSQL(cur, 'ogrodje_tabel.sql')
+    uvoziCSV(cur, 'avtor')
+    uvoziCSV(cur, 'uporabnik')
+    uvozi_knjigo(cur, 'knjige')
+>>>>>>> cd1631d7dfc4edfea330239937cb51242203dde2
     con.commit()
