@@ -14,3 +14,5 @@ __pycache__
 auth.py
 auth.R
 Thumbs.db
+__pycache__
+.pytest_cache
