@@ -1,9 +1,9 @@
 
--- DROP TABLE IF EXISTS knjige;
--- DROP TABLE IF EXISTS avtor;
--- DROP TABLE IF EXISTS uporabnik;
--- DROP TABLE IF EXISTS transakcija;
--- DROP TABLE IF EXISTS ocena;
+DROP TABLE IF EXISTS knjige;
+DROP TABLE IF EXISTS avtor;
+DROP TABLE IF EXISTS uporabnik;
+DROP TABLE IF EXISTS transakcija;
+DROP TABLE IF EXISTS ocena;
 
 
     CREATE TABLE avtor (
