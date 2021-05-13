@@ -18,7 +18,7 @@
         username TEXT NOT NULL,
         geslo TEXT NOT NULL,
         email TEXT NOT NULL,
-        narocnina INTEGER
+        narocnina TEXT NOT NULL
 );
 
 
