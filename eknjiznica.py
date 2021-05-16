@@ -9,7 +9,7 @@ debug(True)  # za izpise pri razvoju
 
 @get('/')
 def index():
-    return 'Začetna stran'
+    return 'UPAJMO DA BO DELALO'
 
 def nastaviSporocilo(sporocilo = None):
     # global napakaSporocilo
@@ -33,6 +33,10 @@ def preveriUporabnika():
             return oseba
     redirect('/prijava')
 
+def hashGesla(s):
+    m = hashlib.sha256()
+    m.update(s.encode("utf-8"))
+    return m.hexdigest()
 
 # Mapa za statične vire (slike, css, ...)
 static_dir = "./static"
@@ -59,14 +63,14 @@ def prijava_post():
     hashBaza = None
     try: 
         hashBaza = cur.execute("SELECT geslo FROM uporabnik WHERE username = ?", (username, )).fetchone()
-        hashBaza = hashBaza[0]
+        hashBaza = hashBaza[3]
     except:
         hashBaza = None
     if hashBaza is None:
         nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni') 
         redirect('/prijava')
         return
-    if hashGesla(password) != hashBaza:
+    if hashGesla(geslo) != hashBaza:
         nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni') 
         redirect('/prijava')
         return
@@ -83,7 +87,7 @@ def uporabnik():
         return
     napaka = nastaviSporocilo()
     cur = baza.cursor()
-    uporabniki = cur.execute("""SELECT ime,priimek,username,geslo,email,narocnina FROM uporabnik""")
+    uporabnik = cur.execute("""SELECT ime,priimek,username,geslo,email,narocnina FROM uporabnik""")
     return template('uporabnik.html', uporabnik=uporabnik, napaka=napaka)
 
 # @post('/uporabnik/brisi/<username>')
@@ -98,20 +102,20 @@ def uporabnik():
 #         nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
 #     redirect('/uporabnik')
 
-# @post('/uporabnik/dodaj') 
-# def dodaj_uporabnik_post():
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     ime = request.forms.ime
-#     priimek = request.forms.priimek
-#     username = request.forms.username
-#     geslo = request.forms.geslo
-#     email = request.forms.email
-#     cur = baza.cursor()
-#     cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (?, ?, ?, ?, ?)", 
-#          (ime, priimek, username, geslo, email))
-#     redirect('/uporabnik')
+@post('/uporabnik/dodaj') 
+def dodaj_uporabnik_post():
+    oseba = preveriUporabnika()
+    if oseba is None: 
+        return
+    ime = request.forms.ime
+    priimek = request.forms.priimek
+    username = request.forms.username
+    geslo = request.forms.geslo
+    email = request.forms.email
+    cur = baza.cursor()
+    cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (?, ?, ?, ?, ?)", 
+         (ime, priimek, username, geslo, email))
+    redirect('/uporabnik')
 
 
 # @get('/uporabnik/uredi/<username>')
@@ -141,7 +145,7 @@ def uporabnik():
 
 
 baza = sqlite3.connect(baza_datoteka, isolation_level=None)
-baza.set_trace_callback(print) # izpis sql stavkov v terminal (za debugiranje pri razvoju) TO PRI PRAVI APLIKACIJI UGASNEŠ
+# baza.set_trace_callback(print) # izpis sql stavkov v terminal (za debugiranje pri razvoju) TO PRI PRAVI APLIKACIJI UGASNEŠ
 # zapoved upoštevanja omejitev FOREIGN KEY
 cur = baza.cursor()
 cur.execute("PRAGMA foreign_keys = ON;")
