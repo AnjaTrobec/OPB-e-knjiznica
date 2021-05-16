@@ -9,18 +9,14 @@
     <th>Username</th>
     <th>Geslo</th>
     <th>Email</th>
-    <th>Naročnina</th>
   </tr>
-  %for (ime,priimek,username, geslo, email, narocnina) in uporabnik:
+  %for (ime,priimek,username, geslo, email) in uporabnik:
   <tr>
     <td>{{ime}}</td>
     <td>{{priimek}}</td>
     <td>{{username}}</td>
     <td>{{geslo}}</td>
     <td>{{email}}</td>
-    <td>{{narocnina}}</td>
-    <td>
-    </td>
   </tr>
   %end
 </table>

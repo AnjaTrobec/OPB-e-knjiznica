@@ -12,7 +12,6 @@ def index():
     return 'UPAJMO DA BO DELALO'
 
 def nastaviSporocilo(sporocilo = None):
-    # global napakaSporocilo
     staro = request.get_cookie("sporocilo", secret=skrivnost)
     if sporocilo is None:
         response.delete_cookie('sporocilo')
@@ -63,19 +62,25 @@ def prijava_post():
     hashBaza = None
     try: 
         hashBaza = cur.execute("SELECT geslo FROM uporabnik WHERE username = ?", (username, )).fetchone()
-        hashBaza = hashBaza[3]
+        hashBaza = hashBaza[0]
     except:
         hashBaza = None
     if hashBaza is None:
-        nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni') 
+        nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect('/prijava')
         return
     if hashGesla(geslo) != hashBaza:
-        nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni') 
+        nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect('/prijava')
         return
     response.set_cookie('username', username, secret=skrivnost)
     redirect('/uporabnik')
+
+
+@get('/odjava')
+def odjava_get():
+    response.delete_cookie('username')
+    redirect('/prijava')
 
 
 ####--UPORABNIK--######
@@ -87,20 +92,22 @@ def uporabnik():
         return
     napaka = nastaviSporocilo()
     cur = baza.cursor()
-    uporabnik = cur.execute("""SELECT ime,priimek,username,geslo,email,narocnina FROM uporabnik""")
+    uporabnik = cur.execute("""
+    SELECT ime,priimek,username,geslo,email FROM uporabnik
+    ORDER BY uporabnik.username""")
     return template('uporabnik.html', uporabnik=uporabnik, napaka=napaka)
 
-# @post('/uporabnik/brisi/<username>')
-# def brisi_uporabnika(username):
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     cur = baza.cursor()
-#     try:
-#         cur.execute("DELETE FROM uporabnik WHERE username = ?", (username, ))
-#     except:
-#         nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
-#     redirect('/uporabnik')
+@post('/uporabnik/brisi/<username>')
+def brisi_uporabnika(username):
+    oseba = preveriUporabnika()
+    if oseba is None: 
+        return
+    cur = baza.cursor()
+    try:
+        cur.execute("DELETE FROM uporabnik WHERE username = ?", (username, ))
+    except:
+        nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
+    redirect('/uporabnik')
 
 @post('/uporabnik/dodaj') 
 def dodaj_uporabnik_post():
@@ -118,34 +125,73 @@ def dodaj_uporabnik_post():
     redirect('/uporabnik')
 
 
-# @get('/uporabnik/uredi/<username>')
-# def uredi_komitenta_get(username):
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     cur = baza.cursor()
-#     uporabnik = cur.execute("SELECT ime, priimek, username, geslo, email FROM uporabnik WHERE username = ?", (username,)).fetchone()
-#     return template('uporabnik-edit.html', uporabnik=uporabnik, naslov="Uredi uporabnika")
+@get('/uporabnik/uredi/<username>')
+def uredi_komitenta_get(username):
+    oseba = preveriUporabnika()
+    if oseba is None: 
+        return
+    cur = baza.cursor()
+    uporabnik = cur.execute("SELECT ime, priimek, username, geslo, email FROM uporabnik WHERE username = ?", (username,)).fetchone()
+    return template('uporabnik-edit.html', uporabnik=uporabnik, naslov="Uredi uporabnika")
 
-# @post('/uporabnik/uredi/<username>')
-# def uredi_uporabnik_post(username):
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     ime = request.forms.ime
-#     priimek = request.forms.priimek
-#     novi_username = request.forms.novi_username
-#     geslo = request.forms.geslo
-#     email = request.forms.email
+@post('/uporabnik/uredi/<username>')
+def uredi_uporabnik_post(username):
+    oseba = preveriUporabnika()
+    if oseba is None: 
+        return
+    ime = request.forms.ime
+    priimek = request.forms.priimek
+    novi_username = request.forms.novi_username
+    geslo = request.forms.geslo
+    email = request.forms.email
 
-#     cur = baza.cursor()
-#     cur.execute("UPDATE oseba SET ime = ?, priimek = ?, novi_username = ?, geslo = ?, email = ? WHERE username = ?", 
-#          (ime, priimek, novi_username, geslo, email, username))
-#     redirect('/uporabnik')
+    cur = baza.cursor()
+    cur.execute("UPDATE oseba SET ime = ?, priimek = ?, novi_username = ?, geslo = ?, email = ? WHERE username = ?", 
+         (ime, priimek, novi_username, geslo, email, username))
+    redirect('/uporabnik')
+
+@get('/registracija')
+def registracija_get():
+    napaka = nastaviSporocilo()
+    return template('registracija.html', napaka=napaka)
+
+@post('/registracija')
+def registracija_post():
+    username = request.forms.username
+    password = request.forms.password
+    password2 = request.forms.password2
+    if username is None or password is None or password2 is None:
+        nastaviSporocilo('Registracija ni možna') 
+        redirect('/registracija')
+        return
+    cur = baza.cursor()    
+    uporabnik = None
+    try: 
+        uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = ?", (username, )).fetchone()
+    except:
+        uporabnik = None
+    if uporabnik is None:
+        nastaviSporocilo('Registracija ni možna') 
+        redirect('/registracija')
+        return
+    if len(password) < 4:
+        nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
+        redirect('/registracija')
+        return
+    if password != password2:
+        nastaviSporocilo('Gesli se ne ujemata.') 
+        redirect('/registracija')
+        return
+    zgostitev = hashGesla(password)
+    cur.execute("UPDATE uporabnik SET password = ? WHERE username = ?", (zgostitev, username))
+    response.set_cookie(username, secret=skrivnost)
+    redirect('/uporabnik')
+
+
 
 
 baza = sqlite3.connect(baza_datoteka, isolation_level=None)
-# baza.set_trace_callback(print) # izpis sql stavkov v terminal (za debugiranje pri razvoju) TO PRI PRAVI APLIKACIJI UGASNEŠ
+baza.set_trace_callback(print) # izpis sql stavkov v terminal (za debugiranje pri razvoju) TO PRI PRAVI APLIKACIJI UGASNEŠ
 # zapoved upoštevanja omejitev FOREIGN KEY
 cur = baza.cursor()
 cur.execute("PRAGMA foreign_keys = ON;")
