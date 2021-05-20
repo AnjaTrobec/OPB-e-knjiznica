@@ -1,15 +1,26 @@
-from bottle import *
-import sqlite3
+from bottleext import *
+
+import auth_public as auth
+
+import psycopg2, psycopg2.extensions, psycopg2.extras 
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+
+import hashlib
 
 # KONFIGURACIJA
-baza_datoteka = 'eknjiznica.db'
+
+#Privzete nastavitve
+SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
+RELOADER = os.environ.get('BOTTLE_RELOADER', True)
+ROOT = os.environ.get('BOTTLE_ROOT', '/')
+DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 # Odkomentiraj, če želiš sporočila o napakah
 debug(True)  # za izpise pri razvoju
 
 @get('/')
 def index():
-    return 'UPAJMO DA BO DELALO'
+    redirect('/prijava')
 
 def nastaviSporocilo(sporocilo = None):
     staro = request.get_cookie("sporocilo", secret=skrivnost)
@@ -25,7 +36,7 @@ def preveriUporabnika():
         cur = baza.cursor()    
         oseba = None
         try: 
-            oseba = cur.execute("SELECT * FROM uporabnik WHERE username = ?", (username, )).fetchone()
+            oseba = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
         except:
             oseba = None
         if oseba: 
@@ -56,15 +67,17 @@ def prijava_post():
     username = request.forms.username
     geslo = request.forms.geslo
     if username is None or geslo is None:
-        nastaviSporocilo('Uporabniško ima in geslo morata biti neprazna') 
+        nastaviSporocilo('Uporabniško ime in geslo morata biti neprazna') 
         redirect('/prijava')
     cur = baza.cursor()    
     hashBaza = None
     try: 
-        hashBaza = cur.execute("SELECT geslo FROM uporabnik WHERE username = ?", (username, )).fetchone()
+        hashBaza = cur.execute("SELECT geslo FROM uporabnik WHERE username = %s", (username, )).fetchone()
         hashBaza = hashBaza[0]
-    except:
+    except Exception as x:
         hashBaza = None
+        print(x)
+    print(hashBaza)
     if hashBaza is None:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect('/prijava')
@@ -104,7 +117,7 @@ def brisi_uporabnika(username):
         return
     cur = baza.cursor()
     try:
-        cur.execute("DELETE FROM uporabnik WHERE username = ?", (username, ))
+        cur.execute("DELETE FROM uporabnik WHERE username = %s", (username, ))
     except:
         nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
     redirect('/uporabnik')
@@ -120,7 +133,7 @@ def dodaj_uporabnik_post():
     geslo = request.forms.geslo
     email = request.forms.email
     cur = baza.cursor()
-    cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (?, ?, ?, ?, ?)", 
+    cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (%s, %s, %s, %s, %s)", 
          (ime, priimek, username, geslo, email))
     redirect('/uporabnik')
 
@@ -131,7 +144,7 @@ def uredi_komitenta_get(username):
     if oseba is None: 
         return
     cur = baza.cursor()
-    uporabnik = cur.execute("SELECT ime, priimek, username, geslo, email FROM uporabnik WHERE username = ?", (username,)).fetchone()
+    uporabnik = cur.execute("SELECT ime, priimek, username, geslo, email FROM uporabnik WHERE username = %s", (username,)).fetchone()
     return template('uporabnik-edit.html', uporabnik=uporabnik, naslov="Uredi uporabnika")
 
 @post('/uporabnik/uredi/<username>')
@@ -146,7 +159,7 @@ def uredi_uporabnik_post(username):
     email = request.forms.email
 
     cur = baza.cursor()
-    cur.execute("UPDATE oseba SET ime = ?, priimek = ?, novi_username = ?, geslo = ?, email = ? WHERE username = ?", 
+    cur.execute("UPDATE oseba SET ime = %s, priimek = %s, novi_username = %s, geslo = %s, email = %s WHERE username = %s", 
          (ime, priimek, novi_username, geslo, email, username))
     redirect('/uporabnik')
 
@@ -167,7 +180,7 @@ def registracija_post():
     cur = baza.cursor()    
     uporabnik = None
     try: 
-        uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = ?", (username, )).fetchone()
+        uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
     except:
         uporabnik = None
     if uporabnik is None:
@@ -183,14 +196,14 @@ def registracija_post():
         redirect('/registracija')
         return
     zgostitev = hashGesla(password)
-    cur.execute("UPDATE uporabnik SET password = ? WHERE username = ?", (zgostitev, username))
+    cur.execute("UPDATE uporabnik SET password = %s WHERE username = %s", (zgostitev, username))
     response.set_cookie(username, secret=skrivnost)
     redirect('/uporabnik')
 
 
 
 
-baza = sqlite3.connect(baza_datoteka, isolation_level=None)
+baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port=DB_PORT)
 baza.set_trace_callback(print) # izpis sql stavkov v terminal (za debugiranje pri razvoju) TO PRI PRAVI APLIKACIJI UGASNEŠ
 # zapoved upoštevanja omejitev FOREIGN KEY
 cur = baza.cursor()

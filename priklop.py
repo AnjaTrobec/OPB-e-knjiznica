@@ -36,7 +36,7 @@ def uvozi_knjigo(cur, tabela):
         cur.executemany("INSERT INTO {0} ({1}) VALUES ({2})".format(
         tabela, ",".join(glava), ",".join(['%s']*len(glava))), vrstice)
 
-with psycopg2.connect(database=db, host=host, user=user, password=password) as con:
+with psycopg2.connect(database=dbname, host=host, user=user, password=password) as con:
     cur = con.cursor()
     uvoziSQL(cur, 'ogrodje_tabel.sql')
     uvoziCSV(cur, 'test-avtor')
