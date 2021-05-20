@@ -36,7 +36,8 @@ def preveriUporabnika():
         cur = baza.cursor()    
         oseba = None
         try: 
-            oseba = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
+            cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, ))
+            oseba = cur.fetchone()
         except:
             oseba = None
         if oseba: 
@@ -65,24 +66,25 @@ def prijava_get():
 @post('/prijava')
 def prijava_post():
     username = request.forms.username
-    geslo = request.forms.geslo
+    geslo = request.forms.password
     if username is None or geslo is None:
         nastaviSporocilo('Uporabniško ime in geslo morata biti neprazna') 
         redirect('/prijava')
     cur = baza.cursor()    
     hashBaza = None
     try: 
-        hashBaza = cur.execute("SELECT geslo FROM uporabnik WHERE username = %s", (username, )).fetchone()
-        hashBaza = hashBaza[0]
+        cur.execute("SELECT geslo FROM uporabnik WHERE username = %s", (username, ))
+        hashBaza, = cur.fetchone()
+        print(hashBaza)
+        print(geslo)
     except Exception as x:
         hashBaza = None
         print(x)
-    print(hashBaza)
     if hashBaza is None:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect('/prijava')
         return
-    if hashGesla(geslo) != hashBaza:
+    if geslo != hashBaza:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect('/prijava')
         return
@@ -122,20 +124,20 @@ def brisi_uporabnika(username):
         nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
     redirect('/uporabnik')
 
-@post('/uporabnik/dodaj') 
-def dodaj_uporabnik_post():
-    oseba = preveriUporabnika()
-    if oseba is None: 
-        return
-    ime = request.forms.ime
-    priimek = request.forms.priimek
-    username = request.forms.username
-    geslo = request.forms.geslo
-    email = request.forms.email
-    cur = baza.cursor()
-    cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (%s, %s, %s, %s, %s)", 
-         (ime, priimek, username, geslo, email))
-    redirect('/uporabnik')
+# @post('/uporabnik/dodaj') 
+# def dodaj_uporabnik_post():
+#     oseba = preveriUporabnika()
+#     if oseba is None: 
+#         return
+#     ime = request.forms.ime
+#     priimek = request.forms.priimek
+#     username = request.forms.username
+#     geslo = request.forms.geslo
+#     email = request.forms.email
+#     cur = baza.cursor()
+#     cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (%s, %s, %s, %s, %s)", 
+#          (ime, priimek, username, geslo, email))
+#     redirect('/uporabnik')
 
 
 @get('/uporabnik/uredi/<username>')
@@ -203,9 +205,6 @@ def registracija_post():
 
 
 
-baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port=DB_PORT)
-baza.set_trace_callback(print) # izpis sql stavkov v terminal (za debugiranje pri razvoju) TO PRI PRAVI APLIKACIJI UGASNEŠ
-# zapoved upoštevanja omejitev FOREIGN KEY
+baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password)
 cur = baza.cursor()
-cur.execute("PRAGMA foreign_keys = ON;")
 run(host='localhost', port=8080, reloader=True) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
