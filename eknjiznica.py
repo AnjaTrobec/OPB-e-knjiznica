@@ -107,9 +107,10 @@ def uporabnik():
         return
     napaka = nastaviSporocilo()
     cur = baza.cursor()
-    uporabnik = cur.execute("""
+    cur.execute("""
     SELECT ime,priimek,username,geslo,email FROM uporabnik
     ORDER BY uporabnik.username""")
+    uporabnik = cur.fetchone()
     return template('uporabnik.html', uporabnik=uporabnik, napaka=napaka)
 
 @post('/uporabnik/brisi/<username>')
@@ -205,6 +206,7 @@ def registracija_post():
 
 
 
-baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password)
+baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
 cur = baza.cursor()
+
 run(host='localhost', port=8080, reloader=True) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)

@@ -1,22 +1,24 @@
 % setdefault('napaka', '')
-% rebase('base.html', napaka=napaka, naslov='Uporabnik')
+% rebase('base.html', napaka=napaka, uporabnik=uporabnik, naslov='Domača stran')
 
-% include('orodna-vrstica.html', povezava='/uporabnik/dodaj', napis="Dodaj uporabnika", stolpci='[1,2,3,4,5,6]')
-<table id="izpis" class="table table-striped">
-  <tr>
-    <th>Ime</th>
-    <th>Priimek</th>
-    <th>Username</th>
-    <th>Geslo</th>
-    <th>Email</th>
-  </tr>
-  %for (ime,priimek,username, geslo, email) in uporabnik:
-  <tr>
-    <td>{{ime}}</td>
-    <td>{{priimek}}</td>
-    <td>{{username}}</td>
-    <td>{{geslo}}</td>
-    <td>{{email}}</td>
-  </tr>
-  %end
-</table>
+<h1>Pozdravljeni {{uporabnik}} eKnjižnice.</h1>
+<div class="highlights">
+  <div class="content">
+  <header>
+      <h3>
+        <b>
+          <a> Vaša trenutna zbirka:</a>
+        </b>
+      </h3>
+  </header>
+  </div>
+  <div class="content">
+  <header>
+  <h3> 
+    <b>
+      <a>Vstop v eKnjižnico</a> 
+    </b>
+  </h3>
+  </header>
+  </div>
+</div>
