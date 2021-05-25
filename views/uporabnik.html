@@ -1,5 +1,5 @@
 % setdefault('napaka', '')
-% rebase('base.html', napaka=napaka, oseba=oseba, naslov='Domača stran')
+% rebase('base.html', napaka=napaka, oseba=oseba, transakcije=transakcije, naslov='Domača stran')
 
 <h1>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h1>
 <div class="highlights">
@@ -7,19 +7,42 @@
   <header>
       <h3>
         <b>
-          <a> Vaša trenutna zbirka:</a>
-          <a> Vaša trenutna narocnina:</a>
+          <a> Vaša trenutna narocnina: {{oseba[6]}}</a>
         </b>
       </h3>
   </header>
+  <header>
+    <h3>
+      <b>
+        <a> Vaša trenutna zbirka:</a>
+      </b>
+    </h3>
+</header>
   </div>
+
   <div class="content">
   <header>
-  <h3> 
-    <b>
-      <a>Vstop v eKnjižnico</a> 
-    </b>
-  </h3>
+    <h3> Vstop v eKnjižnico (to bo gumb)</h3>
   </header>
   </div>
+</div>
+
+%if transakcije == []:
+  <h5> Vstopite v knjiznico in pridobite knjige </h5>
+%end
+
+%if transakcije != []:
+<h2> Kupljene knjige </h2>
+<table>
+<tr>
+  <th> ID_knjige </th>
+  <th> Nakup/izposoja </th>
+%for id_transakcije,id_uporabnika,id_knjige,tip,datum in transakcije:
+<tr>
+<th>{{id_knjige}}</th>
+<th>{{tip}}</th>
+</tr>
+%end
+%end
+</table>
 </div>

@@ -107,7 +107,10 @@ def uporabnik():
     if oseba is None: 
         return
     napaka = nastaviSporocilo()
-    return template('uporabnik.html', oseba=oseba, napaka=napaka)
+    ukaz = ("SELECT * FROM transakcija WHERE id_uporabnika = %s")
+    cur.execute(ukaz,(oseba[1], ))
+    transakcije = cur.fetchall()
+    return template('uporabnik.html', oseba=oseba, transakcije=transakcije, napaka=napaka)
 
 @post('/uporabnik/brisi/<username>')
 def brisi_uporabnika(username):
