@@ -38,6 +38,7 @@ def preveriUporabnika():
         try: 
             cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, ))
             oseba = cur.fetchone()
+            print(oseba)  #v oseba se shranijo vsi podatki o uporabniku
         except:
             oseba = None
         if oseba: 
@@ -106,12 +107,7 @@ def uporabnik():
     if oseba is None: 
         return
     napaka = nastaviSporocilo()
-    cur = baza.cursor()
-    cur.execute("""
-    SELECT ime,priimek,username,geslo,email FROM uporabnik
-    ORDER BY uporabnik.username""")
-    uporabnik = cur.fetchone()
-    return template('uporabnik.html', uporabnik=uporabnik, napaka=napaka)
+    return template('uporabnik.html', oseba=oseba, napaka=napaka)
 
 @post('/uporabnik/brisi/<username>')
 def brisi_uporabnika(username):

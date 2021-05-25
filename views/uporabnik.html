@@ -1,13 +1,14 @@
 % setdefault('napaka', '')
-% rebase('base.html', napaka=napaka, uporabnik=uporabnik, naslov='Domača stran')
+% rebase('base.html', napaka=napaka, oseba=oseba, naslov='Domača stran')
 
-<h1>Pozdravljeni {{uporabnik}} eKnjižnice.</h1>
+<h1>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h1>
 <div class="highlights">
   <div class="content">
   <header>
       <h3>
         <b>
           <a> Vaša trenutna zbirka:</a>
+          <a> Vaša trenutna narocnina:</a>
         </b>
       </h3>
   </header>
