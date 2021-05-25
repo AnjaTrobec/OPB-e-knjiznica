@@ -107,10 +107,11 @@ def uporabnik():
     if oseba is None: 
         return
     napaka = nastaviSporocilo()
-    ukaz = ("SELECT * FROM transakcija WHERE id_uporabnika = %s")
+    ukaz = ("""SELECT datum, naslov, tip FROM transakcija INNER JOIN knjige
+    ON transakcija.id_knjige = knjige.id_knjige WHERE id_uporabnika = %s""")
     cur.execute(ukaz,(oseba[1], ))
-    transakcije = cur.fetchall()
-    return template('uporabnik.html', oseba=oseba, transakcije=transakcije, napaka=napaka)
+    knjige = cur.fetchall()
+    return template('uporabnik.html', oseba=oseba, knjige=knjige, napaka=napaka)
 
 @post('/uporabnik/brisi/<username>')
 def brisi_uporabnika(username):
