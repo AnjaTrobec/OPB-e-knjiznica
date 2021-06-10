@@ -1,7 +1,11 @@
+#uvoz Bottla
+from re import TEMPLATE
 from bottleext import *
 
+#uvoz podatkov za povezavo
 import auth_public as auth
 
+#Uvoz psycopg2
 import psycopg2, psycopg2.extensions, psycopg2.extras 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
@@ -17,6 +21,13 @@ DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 # Odkomentiraj, če želiš sporočila o napakah
 debug(True)  # za izpise pri razvoju
+
+#Funkcije
+def rtemplate(*largs, **kwargs):
+    """
+    Izpis predloge s podajanjem spremenljivke ROOT z osnovnim URL-jem.
+    """
+    return template(ROOT=ROOT, *largs, **kwargs)
 
 @get('/')
 def index():
@@ -204,9 +215,19 @@ def registracija_post():
     redirect('/uporabnik')
 
 
+@get('/knjiznica')
+def knjiznica_get():
+    napaka = nastaviSporocilo()
+    cur = baza.cursor()
+    knjige = cur.execute("SELECT id_knjige, naslov, id_avtorja, cena_nakupa, cena_izposoje FROM knjige")
+    knjige = cur.fetchall()
+    return template('knjiznica.html', napaka=napaka, knjige = knjige)
 
 
+#Povezava na bazo
 baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
-cur = baza.cursor()
+baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-run(host='localhost', port=8080, reloader=True) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
+#Požnemo strežnik na podanih vratih
+run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
