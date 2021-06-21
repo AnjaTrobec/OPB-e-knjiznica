@@ -177,6 +177,17 @@ def uredi_uporabnik_post(username):
          (ime, priimek, novi_username, geslo, email, username))
     redirect('/uporabnik')
 
+def preveri_za_uporabnika(username, email):
+    try:
+        cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
+        uporabnik = cur.fetchone()
+        if uporabnik==None:
+            return True
+        else:
+            return False
+    except:
+        return False
+    
 @get('/registracija')
 def registracija_get():
     napaka = nastaviSporocilo()
@@ -187,47 +198,61 @@ def registracija_post():
     username = request.forms.username
     password = request.forms.password
     password2 = request.forms.password2
-    if username is None or password is None or password2 is None:
-        nastaviSporocilo('Registracija ni možna') 
-        redirect('/registracija')
-        return
-    cur = baza.cursor()    
-    uporabnik = None
-    try: 
-        uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
-    except:
-        uporabnik = None
-    if uporabnik is None:
-        nastaviSporocilo('Registracija ni možna') 
-        redirect('/registracija')
-        return
-    if len(password) < 4:
-        nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
-        redirect('/registracija')
-        return
-    if password != password2:
-        nastaviSporocilo('Gesli se ne ujemata.') 
-        redirect('/registracija')
-        return
-    zgostitev = hashGesla(password)
-    cur.execute("UPDATE uporabnik SET password = %s WHERE username = %s", (zgostitev, username))
-    response.set_cookie(username, secret=skrivnost)
+    ime = request.forms.ime
+    priimek = request.forms.priimek
+    email = request.forms.email
+    subscription = request.forms.subscription
+    cur = baza.cursor()
+    if password=password2:
+        try:
+            cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
+            
+
+    # cur = baza.cursor()    
+    # uporabnik = None
+    # try: 
+    #     uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
+    # except:
+    #     uporabnik = None
+    # if uporabnik is None:
+    #     nastaviSporocilo('Registracija ni možna') 
+    #     redirect('/registracija')
+    #     return
+    # if len(password) < 4:
+    #     nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
+    #     redirect('/registracija')
+    #     return
+    # if password != password2:
+    #     nastaviSporocilo('Gesli se ne ujemata.') 
+    #     redirect('/registracija')
+    #     return
+    # zgostitev = hashGesla(password)
+    # cur.execute("UPDATE uporabnik SET password = %s WHERE username = %s", (zgostitev, username))
+    # response.set_cookie(username, secret=skrivnost)
+    # redirect('/uporabnik')
+    cur = baza.cursor()
+    cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
     redirect('/uporabnik')
+
+
 
 
 @get('/knjiznica')
 def knjiznica_get():
     napaka = nastaviSporocilo()
     cur = baza.cursor()
-    knjige = cur.execute("SELECT id_knjige, naslov, id_avtorja, cena_nakupa, cena_izposoje FROM knjige")
+    knjige = cur.execute("""
+        SELECT id_knjige, naslov, avtor.ime, cena_nakupa, cena_izposoje FROM knjige
+        INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
+    """)
     knjige = cur.fetchall()
     return template('knjiznica.html', napaka=napaka, knjige = knjige)
 
 
-#Povezava na bazo
-baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
-baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
+# #Povezava na bazo
+# baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
+# baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+# cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-#Požnemo strežnik na podanih vratih
-run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
+# #Požnemo strežnik na podanih vratih
+# run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
