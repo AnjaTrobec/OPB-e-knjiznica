@@ -203,10 +203,10 @@ def registracija_post():
     email = request.forms.email
     subscription = request.forms.subscription
     cur = baza.cursor()
-    if password=password2:
-        try:
-            cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
-            
+    # if password=password2:
+    #     try:
+    #         cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
+
 
     # cur = baza.cursor()    
     # uporabnik = None
@@ -249,10 +249,10 @@ def knjiznica_get():
     return template('knjiznica.html', napaka=napaka, knjige = knjige)
 
 
-# #Povezava na bazo
-# baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
-# baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-# cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
+#Povezava na bazo
+baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
+baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-# #Požnemo strežnik na podanih vratih
-# run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
+#Požnemo strežnik na podanih vratih
+run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
