@@ -132,16 +132,29 @@ def uporabnik():
     knjige = cur.fetchall()
     return template('uporabnik.html', oseba=oseba, knjige=knjige, napaka=napaka)
 
-@post('/uporabnik/brisi/<username>')
-def brisi_uporabnika(username):
+@get('/uporabnik/transakcije/<id_uporabnika>')
+def transakcije_uporabnika(id_uporabnika):
+    oseba = preveriUporabnika()
+    if oseba is None: 
+        return
+    napaka = nastaviSporocilo()
+    ukaz = ("""SELECT id_transakcije, id_uporabnika, knjige.naslov, knjige.cena_nakupa, knjige.cena_izposoje, avtor.ime, tip, datum FROM transakcija 
+                INNER JOIN knjige ON transakcija.id_knjige = knjige.id_knjige
+                INNER JOIN avtor ON knjige.id_avtorja = avtor.id_avtorja WHERE id_uporabnika = %s""")
+    cur.execute(ukaz,(oseba[1], ))
+    transakcije = cur.fetchall()
+    return template('uporabnik.html', oseba=oseba, transakcije=transakcije, napaka=napaka)
+
+@post('/uporabnik/brisi/<id_uporabnika>')
+def brisi_uporabnika(id_uporabnika):
     oseba = preveriUporabnika()
     if oseba is None: 
         return
     cur = baza.cursor()
     try:
-        cur.execute("DELETE FROM uporabnik WHERE username = %s", (username, ))
+        cur.execute("DELETE FROM uporabnik WHERE id_uporabnika = %s", (id_uporabnika, ))
     except:
-        nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
+        nastaviSporocilo('Brisanje ni bilo uspešno.') 
     redirect('/uporabnik')
 
 @post('/uporabnik/dodaj') 
@@ -240,7 +253,7 @@ def registracija_post():
     # redirect('/uporabnik')
     cur = baza.cursor()
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
-    redirect('/uporabnik')
+    return (password2)
 
 
 
@@ -255,6 +268,11 @@ def knjiznica_get():
     """)
     knjige = cur.fetchall()
     return template('knjiznica.html', napaka=napaka, knjige = knjige)
+
+# @post('/knjiznica/kupi/<id_knjige>')
+# def kupi_knjigo(id_knjige):
+#     cur = baza.cursor()
+#     cur.execute
 
 
 #Povezava na bazo
