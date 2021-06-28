@@ -20,7 +20,7 @@ ROOT = os.environ.get('BOTTLE_ROOT', '/')
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 # Odkomentiraj, če želiš sporočila o napakah
-debug(True)  # za izpise pri razvoju
+debug(True)  # za izpise pri
 
 #Funkcije
 def rtemplate(*largs, **kwargs):
@@ -29,6 +29,8 @@ def rtemplate(*largs, **kwargs):
     """
     return template(ROOT=ROOT, *largs, **kwargs)
 
+
+#Začetna stran
 @get('/')
 def index():
     redirect('/prijava')
@@ -40,6 +42,7 @@ def nastaviSporocilo(sporocilo = None):
     else:
         response.set_cookie('sporocilo', sporocilo, path="/", secret=skrivnost)
     return staro 
+
 
 def preveriUporabnika(): 
     username = request.get_cookie("username", secret=skrivnost)
@@ -69,6 +72,10 @@ skrivnost = "rODX3ulHw3ZYRdbIVcp1IfJTDn8iQTH6TFaNBgrSkjIulr"
 @route("/static/<filename:path>")
 def static(filename):
     return static_file(filename, root=static_dir)
+
+
+
+#Prijava
 
 @get('/prijava')
 def prijava_get():
@@ -103,6 +110,7 @@ def prijava_post():
     response.set_cookie('username', username, secret=skrivnost)
     redirect('/uporabnik')
 
+#Odjava
 
 @get('/odjava')
 def odjava_get():
@@ -136,20 +144,20 @@ def brisi_uporabnika(username):
         nastaviSporocilo('Brisanje osebe z UPORABNIŠKIM IMENOM {0} ni bilo uspešno.'.format(username)) 
     redirect('/uporabnik')
 
-# @post('/uporabnik/dodaj') 
-# def dodaj_uporabnik_post():
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     ime = request.forms.ime
-#     priimek = request.forms.priimek
-#     username = request.forms.username
-#     geslo = request.forms.geslo
-#     email = request.forms.email
-#     cur = baza.cursor()
-#     cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (%s, %s, %s, %s, %s)", 
-#          (ime, priimek, username, geslo, email))
-#     redirect('/uporabnik')
+@post('/uporabnik/dodaj') 
+def dodaj_uporabnik_post():
+     oseba = preveriUporabnika()
+     if oseba is None: 
+         return
+     ime = request.forms.ime
+     priimek = request.forms.priimek
+     username = request.forms.username
+     geslo = request.forms.geslo
+     email = request.forms.email
+     cur = baza.cursor()
+     cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (%s, %s, %s, %s, %s)", 
+          (ime, priimek, username, geslo, email))
+     redirect('/uporabnik')
 
 
 @get('/uporabnik/uredi/<username>')
