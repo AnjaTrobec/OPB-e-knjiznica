@@ -1,58 +1,81 @@
 % setdefault('napaka', '')
 % rebase('base.html', napaka=napaka, oseba=oseba, knjige=knjige, naslov='Domača stran')
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
-<h1>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h1>
-<div class="highlights">
-  <div class="content">
-    <header>
-      <h3>
-        <b>
-          <a> --------------------------------------------------- </a>
-        </b>
-      </h3>
-    </header>
-    <header>
-      <h3>
-          <a> Vaša trenutna narocnina:
-            <b>{{oseba[6]}}</b>
-          </a>
-      </h3>
-  </header>
-  <header>
-    <h3>
-      <b>
-        <a> --------------------------------------------------- </a>
-      </b>
-    </h3>
-  </header>
-  </div>
-
-  <div class="content">
-  <header>
-    <h3> Vstop v eKnjižnico (to bo gumb)</h3>
-  </header>
-  <header>
-    <h3>
-      <b>
-        <a> --------------------------------------------------- </a>
-      </b>
-    </h3>
-  </header>
-  </div>
-</div>
-
+<center>
+<h2>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h2>
+</center>
+<div class="container emp-profile">
+  <form method="post">
+      <div class="row">
+          <!-- <div class="col-md-12">
+              <div class="profile-img">
+                  <img src="https://www.google.si/url?sa=i&url=https%3A%2F%2Fjejuhydrofarms.com%2Fblank-profile-picture-973460_1280%2F&psig=AOvVaw0yYrGHm8osIm4zOFRzYfd0&ust=1624952059033000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCIijx6ToufECFQAAAAAdAAAAABAN" alt=""/>
+                  <div class="file btn btn-lg btn-primary">
+                      Spremeni sliko
+                      <input type="file" name="file"/>
+                  </div>
+              </div>
+          </div>     -->
+          <div class="highlights">
+            <div class="row">
+              <div class="col-md-12">
+                  <div class="tab-content profile-tab" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <table style="text-align:center;">
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <label>Username</label>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <p>{{oseba[3]}}</p>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <label>Ime in priimek</label>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <p>{{oseba[0]}} {{oseba[2]}}</p>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <label>Email</label>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <p>{{oseba[5]}}</p>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-md-6">
+                                          <label>Naročnina</label>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <p>{{oseba[6]}}</p>
+                                      </div>
+                                    </div>
+                        </table>
+                      </div>
+                  </div>
+              </div>
+            </form>   
+          </div>
 %if knjige == []:
   <h5> Vstopite v knjiznico in pridobite knjige </h5>
+  <a href="{{napaka}}knjiznica/" class="button">Vstop v eKnjižnico</a>
 %end
 
+
 %if knjige != []:
-<h2> 
-  <b>Vaša trenutna zbirka:</b>
+<h2> Vaša trenutna zbirka:
 </h2>
 <table class="center">
 <tr>
   <th> Knjiga </th>
-  <th> Nakup/izposoja </th>
+  <th> Tip transakcije </th>
 %for datum, naslov, tip in knjige:
 <tr>
   <td>{{naslov}}</td>
