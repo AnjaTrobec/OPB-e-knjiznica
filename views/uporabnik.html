@@ -4,7 +4,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
-<h2>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h2>
+<h3>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h3>
     <table style="text-align:center;">
                 <div class="row">
                     <div class="col-md-6">
@@ -67,14 +67,16 @@
 </div>
 
 
-<div class="highlights">
+<!-- <div class="highlights">
     <div class="row">
         <form action="/uporabnik/brisi/{{oseba[1]}}" method="post">
             <input value="Izbriši me iz baze" type="submit" />
         </form>
     </div>
-<<<<<<< HEAD
+</div> -->
+
+<div class="form-row col">
+    <button action="/uporabnik/brisi/{{oseba[1]}}" method="post" class="btn btn-primary" type="submit">
+        Izbriši me iz baze
+    </button>
 </div>
-=======
-</div>
->>>>>>> 948e48e14811c0e88740af005aeafb523d656cb5
