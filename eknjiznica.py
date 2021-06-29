@@ -266,10 +266,10 @@ def knjiznica_get():
     knjige = cur.fetchall()
     return template('knjiznica.html', napaka=napaka, knjige = knjige)
 
-# @post('/knjiznica/kupi/<id_knjige>')
-# def kupi_knjigo(id_knjige):
-#     cur = baza.cursor()
-#     cur.execute("""INSERT INTO  """)
+@post('/knjiznica/kupi/<id_knjige>')
+def kupi_knjigo(id_knjige):
+    cur = baza.cursor()
+    cur.execute(""" """)
 
 
 #Povezava na bazo
