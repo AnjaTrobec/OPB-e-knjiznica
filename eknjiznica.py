@@ -218,17 +218,15 @@ def registracija_get():
 def registracija_post():
     username = request.forms.username
     password = request.forms.password
-    password2 = request.forms.password2
+    password2 = request.forms.password
     ime = request.forms.ime
     priimek = request.forms.priimek
     email = request.forms.email
     subscription = request.forms.subscription
     cur = baza.cursor()
-    # if password=password2:
+    # if password != None:
     #     try:
     #         cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
-
-
     # cur = baza.cursor()    
     # uporabnik = None
     # try: 
@@ -251,11 +249,10 @@ def registracija_post():
     # cur.execute("UPDATE uporabnik SET password = %s WHERE username = %s", (zgostitev, username))
     # response.set_cookie(username, secret=skrivnost)
     # redirect('/uporabnik')
-    cur = baza.cursor()
-    cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
-    return (password2)
 
-
+    # cur = baza.cursor()
+    # cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
+    # return (password2)
 
 
 @get('/knjiznica')
@@ -272,7 +269,7 @@ def knjiznica_get():
 # @post('/knjiznica/kupi/<id_knjige>')
 # def kupi_knjigo(id_knjige):
 #     cur = baza.cursor()
-#     cur.execute
+#     cur.execute("""INSERT INTO  """)
 
 
 #Povezava na bazo
