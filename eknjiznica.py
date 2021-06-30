@@ -150,7 +150,7 @@ def brisi_uporabnika(id_uporabnika):
     oseba = preveriUporabnika()
     if oseba is None: 
         return
-    cur = baza.cursor()
+    cur = baza.cursor() 
     try:
         cur.execute("DELETE FROM uporabnik WHERE id_uporabnika = %s", (id_uporabnika, ))
     except:
@@ -225,8 +225,8 @@ def registracija_post():
     cur = baza.cursor()
     # if password != None:
     #     try:
-    #         cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
-    # cur = baza.cursor()    
+    #         cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email)) 
+
     # uporabnik = None
     # try: 
     #     uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
@@ -254,6 +254,10 @@ def registracija_post():
     # return (password2)
 
 
+
+
+
+# KNJIŽNICA
 @get('/knjiznica')
 def knjiznica_get():
     napaka = nastaviSporocilo()
@@ -270,15 +274,25 @@ def kupi_knjigo(id_knjige):
     cur = baza.cursor()
     knjiga=request.forms.id_knjige
     uporabnik=request.forms.id_uporabnika
-    cur.execute("UPDATE transakcija WHERE id_uporabnika = %s id_knjige = %s", (id_uporabnika, id_knjige)).fetchone()
-    redirect('/transakcije')
+    cur.execute("UPDATE transakcija WHERE id_uporabnika = %s, id_knjige = %s", (id_uporabnika, id_knjige)).fetchone()
+    redirect('/uporabnik')
 
-@get('/moje_knjige')
-def moja_eKnjiznica_get():
+
+
+
+# UPORABNIKOVA IZBIRKA KNJIG
+@get('/moja_knjiznica')
+def moja_knjiznica_get():
+    napaka = nastaviSporocilo()
+    return template('moje_knjige.html', napaka=napaka)
+
+@post('/moja_knjiznica')
+def moja_eKnjiznica_post():
     napaka = nastaviSporocilo()
     cur = baza.cursor()
-    transakcija = cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s", (id_uporabnika))
-    return template('moje_knjige.html', napaka=napaka, transakcija = transakcija)
+    cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s, (id_uporabnika,)")
+    redirect('/uporabnik')
+    
 
 #Povezava na bazo
 baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
