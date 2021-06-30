@@ -217,7 +217,7 @@ def registracija_get():
 def registracija_post():
     username = request.forms.username
     password = request.forms.password
-    password2 = request.forms.password
+    password2 = request.forms.password2
     ime = request.forms.ime
     priimek = request.forms.priimek
     email = request.forms.email
@@ -277,7 +277,7 @@ def kupi_knjigo(id_knjige):
 def moja_eKnjiznica_get():
     napaka = nastaviSporocilo()
     cur = baza.cursor()
-    transakcija = cur.execute("SELECT id_uporabnika, id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s", (id_uporabnika))
+    transakcija = cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s", (id_uporabnika))
     return template('moje_knjige.html', napaka=napaka, transakcija = transakcija)
 
 #Povezava na bazo
