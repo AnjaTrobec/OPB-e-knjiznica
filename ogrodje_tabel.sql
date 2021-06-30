@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS ocena;
         id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
         id_knjige INTEGER REFERENCES knjige (id_knjige),
         tip TEXT,
-        datum DATE NOT NULL
+        datum DATE NOT NULL DEFAULT (datetime('now'))
         
  );
 

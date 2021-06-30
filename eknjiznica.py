@@ -192,7 +192,6 @@ def uredi_uporabnik_post(username):
     novi_username = request.forms.novi_username
     geslo = request.forms.geslo
     email = request.forms.email
-
     cur = baza.cursor()
     cur.execute("UPDATE oseba SET ime = %s, priimek = %s, novi_username = %s, geslo = %s, email = %s WHERE username = %s", 
          (ime, priimek, novi_username, geslo, email, username))
@@ -269,8 +268,17 @@ def knjiznica_get():
 @post('/knjiznica/kupi/<id_knjige>')
 def kupi_knjigo(id_knjige):
     cur = baza.cursor()
-    cur.execute(""" """)
+    knjiga=request.forms.id_knjige
+    uporabnik=request.forms.id_uporabnika
+    cur.execute("UPDATE transakcija WHERE id_uporabnika = %s id_knjige = %s", (id_uporabnika, id_knjige)).fetchone()
+    redirect('/transakcije')
 
+@get('/moje_knjige')
+def moja_eKnjiznica_get():
+    napaka = nastaviSporocilo()
+    cur = baza.cursor()
+    transakcija = cur.execute("SELECT id_uporabnika, id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s", (id_uporabnika))
+    return template('moje_knjige.html', napaka=napaka, transakcija = transakcija)
 
 #Povezava na bazo
 baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)

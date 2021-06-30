@@ -5,41 +5,59 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
 <h3>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h3>
-    <table style="text-align:center;">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Username</label>
-                    </div>
-                    <div class="col-md-6">
-                        <p>{{oseba[3]}}</p>
-                    </div>
+<table style="text-align:center;">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Username</label>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Ime in priimek</label>
-                    </div>
-                    <div class="col-md-6">
-                        <p>{{oseba[0]}} {{oseba[2]}}</p>
-                    </div>
+                <div class="col-md-6">
+                    <p>{{oseba[3]}}</p>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Email</label>
-                    </div>
-                    <div class="col-md-6">
-                        <p>{{oseba[5]}}</p>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Ime in priimek</label>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Naročnina</label>
-                    </div>
-                    <div class="col-md-6">
-                        <p>{{oseba[6]}}</p>
-                    </div>
+                <div class="col-md-6">
+                    <p>{{oseba[0]}} {{oseba[2]}}</p>
                 </div>
-    </table>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Email</label>
+                </div>
+                <div class="col-md-6">
+                    <p>{{oseba[5]}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Naročnina</label>
+                </div>
+                <div class="col-md-6">
+                    <p>{{oseba[6]}}</p>
+                </div>
+            </div>
+</table>
+<table>
+    <tr>
+        <td>
+            <a href="/knjiznica">Vstopi v e-Knjižnico</a>
+        </td>
 
+    </tr>
+    <tr>
+        <td>
+            <a href="/moje_knjige">Moja e-Knjižnica</a>
+        </td>
+    </tr>   
+</table>
+
+<div class="form-row col">
+    <button action="/uporabnik/brisi/{{oseba[1]}}" method="post" class="btn btn-primary" type="submit">
+        Izbriši moj profil
+    </button>
+</div>
 
 %if knjige == []:
   <h5> Vstopite v knjiznico in pridobite knjige </h5>
@@ -47,36 +65,4 @@
 %end
 
 
-%if knjige != []:
-<div class=row>
-    <div class=column>
-        <table class="center">
-            <center><tr> <th>MOJE KNJIGE </th></tr></center>
-            <tr>
-              <th> Knjiga </th>
-              <th> Tip transakcije </th>
-            %for datum, naslov, tip in knjige:
-            <tr>
-              <td>{{naslov}}</td>
-              <td>{{tip}}</td>
-            </tr>
-            %end
-            %end
-        </table> 
-    </div>
-</div>
 
-
-<!-- <div class="highlights">
-    <div class="row">
-        <form action="/uporabnik/brisi/{{oseba[1]}}" method="post">
-            <input value="Izbriši me iz baze" type="submit" />
-        </form>
-    </div>
-</div> -->
-
-<div class="form-row col">
-    <button action="/uporabnik/brisi/{{oseba[1]}}" method="post" class="btn btn-primary" type="submit">
-        Izbriši me iz baze
-    </button>
-</div>
