@@ -3,6 +3,7 @@
 % rebase('base.html', napaka=napaka, naslov=naslov)
 
 <form action="{{ '/uporabnik/uredi/' + uporabnik[2] if defined('uporabnik') else '/uporabnik/dodaj'}}" method="post">
+    <form action="{{ '/uporabnik/uredi/' + uporabnik[2] if defined('uporabnik') else '/uporabnik/dodaj'}}" method="post">
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="username">Username</label>
