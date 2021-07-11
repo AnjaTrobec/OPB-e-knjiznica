@@ -1,5 +1,5 @@
 body {
-    /* font-family: Arial; */
+    font-family: Arial;
 }   
 
 .napaka-box {
@@ -26,7 +26,7 @@ body {
     padding: 1rem;
 }
 
-#isci {
+#isci { 
     line-height: 1.5rem;
     margin-left: 0.25rem;
 }
