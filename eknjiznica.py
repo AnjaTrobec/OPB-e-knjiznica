@@ -75,8 +75,7 @@ def static(filename):
 
 
 
-#Prijava
-
+#PRIJAVA
 @get('/prijava')
 def prijava_get():
     napaka = nastaviSporocilo()
@@ -208,6 +207,8 @@ def preveri_za_uporabnika(username, email):
     except:
         return False
     
+
+# REGISTRACIJA
 @get('/registracija')
 def registracija_get():
     napaka = nastaviSporocilo()
