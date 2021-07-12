@@ -11,6 +11,8 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import hashlib
 
+
+
 # KONFIGURACIJA
 
 #Privzete nastavitve
