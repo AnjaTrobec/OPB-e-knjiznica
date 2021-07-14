@@ -11,6 +11,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import hashlib
 
+from datetime import date
 
 
 # KONFIGURACIJA
@@ -280,9 +281,23 @@ def knjiznica_get():
 @post('/knjiznica/kupi/<id_knjige>')
 def kupi_knjigo(id_knjige):
     oseba = preveriUporabnika()
-    id_uporabnika = request.forms.id_uporabnika
+    id_uporabnika = oseba[1]
+    #return oseba;
+    today = date.today()
+    d1 = today.strftime("%d/%m/%Y")
     cur = baza.cursor()
-    cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige) VALUES (%s, %s)", (id_uporabnika, id_knjige)).fetchone()
+    cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
+    redirect('/moje_knjige')
+
+@post('/knjiznica/izposodi/<id_knjige>')
+def kupi_knjigo(id_knjige):
+    oseba = preveriUporabnika()
+    id_uporabnika = oseba[1]
+    #return oseba;
+    today = date.today()
+    d1 = today.strftime("%d/%m/%Y")
+    cur = baza.cursor()
+    cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
     redirect('/moje_knjige')
 
 
@@ -291,20 +306,25 @@ def kupi_knjigo(id_knjige):
 @get('/moje_knjige')
 def moja_knjiznica_get():
     napaka = nastaviSporocilo()
+    oseba = preveriUporabnika()
+    id_uporabnika = oseba[1]
     cur = baza.cursor()
     knjige = cur.execute("""
-        SELECT id_knjige, naslov, avtor.ime FROM knjige
-        INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
-    """)
+        SELECT knjige.id_knjige, avtor.ime, knjige.naslov 
+        FROM transakcija, knjige, avtor
+        WHERE transakcija.id_uporabnika = %s
+        AND knjige.id_knjige = transakcija.id_knjige
+        AND knjige.id_avtorja = avtor.id_avtorja
+        """, [id_uporabnika])
     knjige = cur.fetchall()
     return template('moje_knjige.html', napaka=napaka, knjige=knjige)
 
-@post('/moje_knjige')
-def moja_eKnjiznica_post():
-    napaka = nastaviSporocilo()
-    cur = baza.cursor()
-    cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s, (id_uporabnika,)")
-    redirect('/uporabnik')
+# @post('/moje_knjige')
+# def moja_eKnjiznica_post():
+#     napaka = nastaviSporocilo()
+#     cur = baza.cursor()
+#     cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s, (id_uporabnika,)")
+#     redirect('/uporabnik')
     
 
 

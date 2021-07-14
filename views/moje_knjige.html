@@ -9,15 +9,15 @@
 %if knjige != []:
 <table id="tabela" cellpadding="0" cellspacing="0" border="1">
     <tr>
-        <th>ŠTEVILKA KJIGE</th>
+        <th>ŠTEVILKA KNJIGE</th>
         <th>AVTOR</th>
         <th>NASLOV</th>
     </tr>
     
-%for (id_knjige, id_avtorja, naslov) in knjige:
+%for (id_knjige, ime, naslov) in knjige:
     <tr>
         <td>{{id_knjige}}</td>
-        <td>{{id_avtorja}}</td>
+        <td>{{ime}}</td>
         <td>{{naslov}}</td>
     </tr>
 %end
