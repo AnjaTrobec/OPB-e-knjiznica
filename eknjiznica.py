@@ -221,46 +221,46 @@ def registracija_get():
     napaka = nastaviSporocilo()
     return template('registracija.html', napaka=napaka)
 
-@post('/registracija')
-def registracija_post():
-    username = request.forms.username
-    password = request.forms.password
-    password2 = request.forms.password2
-    ime = request.forms.ime
-    priimek = request.forms.priimek
-    email = request.forms.email
-    subscription = request.forms.subscription
-    cur = baza.cursor()
+# @post('/registracija')
+# def registracija_post():
+#     username = request.forms.username
+#     password = request.forms.password
+#     password2 = request.forms.password2
+#     ime = request.forms.ime
+#     priimek = request.forms.priimek
+#     email = request.forms.email
+#     subscription = request.forms.subscription
+#     cur = baza.cursor()
 
-    if password != None:
-        try:
-            cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email)) 
+#     if password != None:
+#         try:
+#             cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email)) 
 
-    uporabnik = None
-    try: 
-        uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
-    except:
-        uporabnik = None
-    if uporabnik is None:
-        nastaviSporocilo('Registracija ni možna') 
-        redirect('/registracija')
-        return
-    if len(password) < 4:
-        nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
-        redirect('/registracija')
-        return
-    if password != password2:
-        nastaviSporocilo('Gesli se ne ujemata.') 
-        redirect('/registracija')
-        return
-    zgostitev = hashGesla(password)
-    cur.execute("UPDATE uporabnik SET password = %s WHERE username = %s", (zgostitev, username))
-    response.set_cookie(username, secret=skrivnost)
-    redirect('/uporabnik')
+#     uporabnik = None
+#     try: 
+#         uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
+#     except:
+#         uporabnik = None
+#     if uporabnik is None:
+#         nastaviSporocilo('Registracija ni možna') 
+#         redirect('/registracija')
+#         return
+#     if len(password) < 4:
+#         nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
+#         redirect('/registracija')
+#         return
+#     if password != password2:
+#         nastaviSporocilo('Gesli se ne ujemata.') 
+#         redirect('/registracija')
+#         return
+#     zgostitev = hashGesla(password)
+#     cur.execute("UPDATE uporabnik SET password = %s WHERE username = %s", (zgostitev, username))
+#     response.set_cookie(username, secret=skrivnost)
+#     redirect('/uporabnik')
 
-    cur = baza.cursor()
-    cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
-    return (password2)
+#     cur = baza.cursor()
+#     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
+#     return (password2)
 
 
 #___________________________________________________________________________________________________________________________
@@ -279,10 +279,11 @@ def knjiznica_get():
 
 @post('/knjiznica/kupi/<id_knjige>')
 def kupi_knjigo(id_knjige):
+    oseba = preveriUporabnika()
+    id_uporabnika = request.forms.id_uporabnika
     cur = baza.cursor()
-    cur.execute("INSERT INTO transakcija (id_knjige) VALUES (%s)", (id_knjige, )).fetchone()
+    cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige) VALUES (%s, %s)", (id_uporabnika, id_knjige)).fetchone()
     redirect('/moje_knjige')
-
 
 
 #___________________________________________________________________________________________________________________________
