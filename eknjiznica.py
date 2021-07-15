@@ -253,7 +253,7 @@ def registracija_post():
     cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
     response.set_cookie('username', username, secret=skrivnost)
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
-    redirect('/uporabnik')
+    redirect(url('uporabnik'))
 
 
 #___________________________________________________________________________________________________________________________
@@ -279,7 +279,7 @@ def kupi_knjigo(id_knjige):
     d1 = today.strftime("%d/%m/%Y")
     cur = baza.cursor()
     cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
-    redirect('/moje_knjige')
+    redirect(url('moja_knjiznica_get'))
 
 @post('/knjiznica/izposodi/<id_knjige>')
 def kupi_knjigo(id_knjige):
@@ -290,7 +290,7 @@ def kupi_knjigo(id_knjige):
     d1 = today.strftime("%d/%m/%Y")
     cur = baza.cursor()
     cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
-    redirect('/moje_knjige')
+    redirect(url('moja_knjiznica_get'))
 
 
 #___________________________________________________________________________________________________________________________
@@ -306,7 +306,7 @@ def moja_knjiznica_get():
         INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
         WHERE id_knjige IN (
             SELECT id_knjige FROM transakcija
-            WHERE id_uporabnika = %s AND tip = 'nakup');  
+            WHERE id_uporabnika = %s AND tip = 'nakup' OR tip = 'izposoja');  
         """, [id_uporabnika])
     knjige = cur.fetchall()
     return template('moje_knjige.html', napaka=napaka, knjige=knjige)
