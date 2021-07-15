@@ -15,9 +15,9 @@ DROP TABLE IF EXISTS ocena;
         ime TEXT NOT NULL,
         id_uporabnika SERIAL PRIMARY KEY,
         priimek TEXT NOT NULL,
-        username TEXT NOT NULL,
+        username TEXT NOT NULL UNIQUE,
         geslo TEXT NOT NULL,
-        email TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
         narocnina TEXT NOT NULL
 );
 
@@ -41,8 +41,8 @@ DROP TABLE IF EXISTS ocena;
  );
 
      CREATE TABLE ocena(
-        id_uporabnika INTEGER REFERENCES uporabnik(id_uporabnika),
-        id_knjige INTEGER REFERENCES knjige(id_knjige),
+        id_uporabnika INTEGER REFERENCES uporabnik(id_uporabnika) SERIAL PRIMARY KEY,
+        id_knjige INTEGER REFERENCES knjige(id_knjige) SERIAL PRIMARY KEY,
         ocena INTEGER
 );
 
