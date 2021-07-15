@@ -253,6 +253,7 @@ def registracija_post():
     cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
     response.set_cookie('username', username, secret=skrivnost)
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
+    baza.commit()
     redirect(url('uporabnik'))
 
 
@@ -323,7 +324,7 @@ def moja_knjiznica_get():
 #___________________________________________________________________________________________________________________________
 #POVEZAVA NA BAZO
 baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
-baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+# baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 #Požnemo strežnik na podanih vratih
