@@ -23,7 +23,7 @@ ROOT = os.environ.get('BOTTLE_ROOT', '/')
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 # Odkomentiraj, če želiš sporočila o napakah
-debug(True)  # za izpise pri
+debug(True)  # za izpise v terminalu, pomaga pri iskanju
 
 
 #___________________________________________________________________________________________________________________________
@@ -33,7 +33,6 @@ def rtemplate(*largs, **kwargs):
     Izpis predloge s podajanjem spremenljivke ROOT z osnovnim URL-jem.
     """
     return template(ROOT=ROOT, *largs, **kwargs)
-
 
 
 #___________________________________________________________________________________________________________________________
@@ -225,30 +224,28 @@ def registracija_get():
 @post('/registracija')
 def registracija_post():
     username = request.forms.username
-    password = request.forms.password
-    password2 = request.forms.password2
     ime = request.forms.ime
     priimek = request.forms.priimek
     email = request.forms.email
+    password = request.forms.password
+    password2 = request.forms.password2
     subscription = request.forms.subscription
 
+    #preverimo, ce je izbrani username ze zaseden
     cur = baza.cursor()
+    cur.execute("SELECT * FROM uporabnik WHERE username=%s",
+              [username])
+    upor = cur.fetchone()
+    if upor is not None:
+        return template("registracija.html", ime=ime, priimek=priimek, username=username,
+                               email=email, napaka="Uporabniško ime je že zasedeno!")
 
-    if password != None:
-        try:
-            cur.execute("SELECT username, email FROM uporabnik WHERE username = %s OR email= %s", (username,email))
-        except:
-            uporabnik = None
-        try: 
-            uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
-        except:
-            uporabnik = None
-        if uporabnik is None:
-            nastaviSporocilo('Registracija ni možna') 
-        if len(password) < 4:
-            nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
-        if password != password2:
-            nastaviSporocilo('Gesli se ne ujemata.') 
+    # preverimo, ali se gesli ujemata
+    if password != password2:
+        return template("registracija.html", ime=ime, priimek=priimek, username=username,
+                               email=email, napaka="Gesli se ne ujemata!")
+
+    #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
     cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
     response.set_cookie('username', username, secret=skrivnost)
@@ -257,6 +254,39 @@ def registracija_post():
     redirect(url('uporabnik'))
 
 
+# STARA REGISTRACIJA
+# def registracija_post():
+#     username = request.forms.username
+#     password = request.forms.password
+#     password2 = request.forms.password2
+#     ime = request.forms.ime
+#     priimek = request.forms.priimek
+#     email = request.forms.email
+#     subscription = request.forms.subscription
+
+#     cur = baza.cursor()
+
+#     if password is not None and ime is not None and password2 is not None and priimek is not None and email is not None:
+#         try:
+#             cur.execute("SELECT username, email FROM uporabnik WHERE username = %s OR email= %s", (username,email))
+#             uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
+#         except:
+#             uporabnik = None
+#         if uporabnik is None:
+#             nastaviSporocilo('Registracija ni uspela.') 
+#         if len(password) < 4:
+#             nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
+#         if password != password2:
+#             nastaviSporocilo('Gesli se ne ujemata.') 
+#         if username is None:
+#             nastaviSporocilo('Izberi uporabniško ime.')
+
+#     zgostitev = hashGesla(password)
+#     cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
+#     response.set_cookie('username', username, secret=skrivnost)
+#     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
+#     baza.commit()
+#     redirect(url('uporabnik'))
 #___________________________________________________________________________________________________________________________
 # KNJIŽNICA
 @get('/knjiznica')
