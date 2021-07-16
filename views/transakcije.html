@@ -1,6 +1,5 @@
 % setdefault(napaka, '')
-% rebase('base.html', napaka = napaka, oseba=oseba, transakcije=transakcije, naslov = 'Moje transakcije')
-
+% rebase('base.html', napaka = napaka, naslov = 'Transakcije')
 
 <table id="tabela" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -11,7 +10,7 @@
         <th>tip</th>
     </tr>
     
-    %for (id_transakcije, id_uporabnika, naslov,cena_nakupa, cena_izposoje, ime, tip, datum) in transakcije:
+    %for (id_transakcije, id_uporabnika, naslov,cena_nakupa, cena_izposoje, ime, tip, datum) in transakcija:
         <tr>
             <td>{{datum}}</td>
             <td>{{ime}}</td>

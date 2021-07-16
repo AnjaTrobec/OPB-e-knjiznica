@@ -233,8 +233,7 @@ def registracija_post():
 
     #preverimo, ce je izbrani username ze zaseden
     cur = baza.cursor()
-    cur.execute("SELECT * FROM uporabnik WHERE username=%s",
-              [username])
+    cur.execute("SELECT * FROM uporabnik WHERE username=%s", (username,))
     upor = cur.fetchone()
     if upor is not None:
         return template("registracija.html", ime=ime, priimek=priimek, username=username,
@@ -245,6 +244,12 @@ def registracija_post():
         return template("registracija.html", ime=ime, priimek=priimek, username=username,
                                email=email, napaka="Gesli se ne ujemata!")
 
+    #preverimo, ali ima geslo vsaj 4 znake
+    if len(password) < 4:
+        return template("registracija.html", ime=ime, priimek=priimek, username=username,
+                               email=email, napaka="Geslo mora imeti vsaj 4 znake!")
+    
+
     #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
     cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
@@ -253,40 +258,6 @@ def registracija_post():
     baza.commit()
     redirect(url('uporabnik'))
 
-
-# STARA REGISTRACIJA
-# def registracija_post():
-#     username = request.forms.username
-#     password = request.forms.password
-#     password2 = request.forms.password2
-#     ime = request.forms.ime
-#     priimek = request.forms.priimek
-#     email = request.forms.email
-#     subscription = request.forms.subscription
-
-#     cur = baza.cursor()
-
-#     if password is not None and ime is not None and password2 is not None and priimek is not None and email is not None:
-#         try:
-#             cur.execute("SELECT username, email FROM uporabnik WHERE username = %s OR email= %s", (username,email))
-#             uporabnik = cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, )).fetchone()
-#         except:
-#             uporabnik = None
-#         if uporabnik is None:
-#             nastaviSporocilo('Registracija ni uspela.') 
-#         if len(password) < 4:
-#             nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
-#         if password != password2:
-#             nastaviSporocilo('Gesli se ne ujemata.') 
-#         if username is None:
-#             nastaviSporocilo('Izberi uporabniško ime.')
-
-#     zgostitev = hashGesla(password)
-#     cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
-#     response.set_cookie('username', username, secret=skrivnost)
-#     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
-#     baza.commit()
-#     redirect(url('uporabnik'))
 #___________________________________________________________________________________________________________________________
 # KNJIŽNICA
 @get('/knjiznica')
@@ -305,7 +276,6 @@ def knjiznica_get():
 def kupi_knjigo(id_knjige):
     oseba = preveriUporabnika()
     id_uporabnika = oseba[1]
-    #return oseba;
     today = date.today()
     d1 = today.strftime("%d/%m/%Y")
     cur = baza.cursor()
@@ -316,7 +286,6 @@ def kupi_knjigo(id_knjige):
 def kupi_knjigo(id_knjige):
     oseba = preveriUporabnika()
     id_uporabnika = oseba[1]
-    #return oseba;
     today = date.today()
     d1 = today.strftime("%d/%m/%Y")
     cur = baza.cursor()
@@ -332,23 +301,33 @@ def moja_knjiznica_get():
     oseba = preveriUporabnika()
     id_uporabnika = oseba[1]
     cur = baza.cursor()
-    knjige = cur.execute("""
+    k = cur.execute("""
         SELECT id_knjige, naslov, avtor.ime FROM knjige
         INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
         WHERE id_knjige IN (
             SELECT id_knjige FROM transakcija
-            WHERE id_uporabnika = %s AND tip = 'nakup' OR tip = 'izposoja');  
-        """, [id_uporabnika])
-    knjige = cur.fetchall()
-    return template('moje_knjige.html', napaka=napaka, knjige=knjige)
+            WHERE id_uporabnika = %s AND tip = 'nakup' OR tip = 'izposoja')""",(id_uporabnika,))
+    k = cur.fetchall()
+    return template('moje_knjige.html', napaka=napaka, knjige=k)
 
 # @post('/moje_knjige')
-# def moja_eKnjiznica_post():
+# def moja_knjiznica_post():
 #     napaka = nastaviSporocilo()
+#     oseba = preveriUporabnika()
+#     id_uporabnika = oseba[1]
 #     cur = baza.cursor()
-#     cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s, (id_uporabnika,)")
+#     cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s", (id_uporabnika,))
 #     redirect('/uporabnik')
     
+
+
+
+#___________________________________________________________________________________________________________________________
+#TRANSAKCIJE
+@get('/transakcije')
+def transakcija_get():
+    napaka = nastaviSporocilo()
+    return template('transakcije.html', napaka=napaka)
 
 
 #___________________________________________________________________________________________________________________________

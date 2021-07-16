@@ -26,7 +26,6 @@ DROP TABLE IF EXISTS ocena;
         id_knjige SERIAL PRIMARY KEY,
         naslov TEXT NOT NULL,
         id_avtorja INTEGER REFERENCES avtor(id_avtorja),
-        url_slike TEXT,
         cena_nakupa REAL,
         cena_izposoje REAL
 );
