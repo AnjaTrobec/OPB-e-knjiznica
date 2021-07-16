@@ -126,17 +126,22 @@ def odjava_get():
 
 #___________________________________________________________________________________________________________________________
 #UPORABNIK
+
 @get('/uporabnik')
 def uporabnik():
     oseba = preveriUporabnika()
     if oseba is None: 
         return
     napaka = nastaviSporocilo()
-    ukaz = ("""SELECT datum, naslov, tip FROM transakcija INNER JOIN knjige
-    ON transakcija.id_knjige = knjige.id_knjige WHERE id_uporabnika = %s""")
-    cur.execute(ukaz,(oseba[1], ))
-    knjige = cur.fetchall()
-    return template('uporabnik.html', oseba=oseba, knjige=knjige, napaka=napaka)
+    cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
+    st_knjig = cur.fetchone()
+    krediti = 0
+    if oseba[6]=='basic': 
+        krediti = 20
+    else:
+        krediti = 30
+    print (st_knjig)
+    return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti = krediti)
 
 @get('/uporabnik/transakcije/<id_uporabnika>')
 def transakcije_uporabnika(id_uporabnika):
