@@ -1,9 +1,8 @@
 
-DROP TABLE IF EXISTS knjige;
-DROP TABLE IF EXISTS avtor;
-DROP TABLE IF EXISTS uporabnik;
-DROP TABLE IF EXISTS transakcija;
-DROP TABLE IF EXISTS ocena;
+-- DROP TABLE IF EXISTS avtor ;
+-- DROP TABLE IF EXISTS uporabnik;
+-- DROP TABLE IF EXISTS transakcija;
+-- DROP TABLE IF EXISTS knjige;
 
 
     CREATE TABLE avtor (
@@ -11,39 +10,33 @@ DROP TABLE IF EXISTS ocena;
     ime TEXT NOT NULL
 );
     
-    CREATE TABLE uporabnik (
-        ime TEXT NOT NULL,
-        id_uporabnika SERIAL PRIMARY KEY,
-        priimek TEXT NOT NULL,
-        username TEXT NOT NULL UNIQUE,
-        geslo TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        narocnina TEXT NOT NULL
-);
+--     CREATE TABLE uporabnik (
+--         ime TEXT NOT NULL,
+--         id_uporabnika SERIAL PRIMARY KEY,
+--         priimek TEXT NOT NULL,
+--         username TEXT NOT NULL UNIQUE,
+--         geslo TEXT NOT NULL,
+--         email TEXT NOT NULL UNIQUE,
+--         narocnina TEXT NOT NULL
+-- );
 
 
     CREATE TABLE knjige (
         id_knjige SERIAL PRIMARY KEY,
         naslov TEXT NOT NULL,
         id_avtorja INTEGER REFERENCES avtor(id_avtorja),
-        cena_nakupa REAL,
-        cena_izposoje REAL
+        cena_nakupa REAL
 );
 
-    CREATE TABLE transakcija(
-        id_transakcije SERIAL PRIMARY KEY,
-        id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
-        id_knjige INTEGER REFERENCES knjige (id_knjige),
-        tip TEXT,
-        datum DATE NOT NULL DEFAULT (datetime('now'))
+--     CREATE TABLE transakcija(
+--         id_transakcije SERIAL PRIMARY KEY,
+--         id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
+--         id_knjige INTEGER REFERENCES knjige (id_knjige),
+--         tip TEXT,
+--         datum DATE NOT NULL DEFAULT (datetime('now'))
         
- );
+--  );
 
-     CREATE TABLE ocena(
-        id_uporabnika INTEGER REFERENCES uporabnik(id_uporabnika) SERIAL PRIMARY KEY,
-        id_knjige INTEGER REFERENCES knjige(id_knjige) SERIAL PRIMARY KEY,
-        ocena INTEGER
-);
 
 GRANT ALL ON DATABASE sem2021_anamarijab TO anjat;
 GRANT ALL ON SCHEMA public TO anjat;
