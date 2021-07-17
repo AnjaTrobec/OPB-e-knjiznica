@@ -25,7 +25,13 @@ def uvozi_knjigo(cur, tabela):
         podatki = csv.reader(csvfile, quotechar=';')
         vsiPodatki = [vrstica for vrstica in podatki]
         glava = vsiPodatki[0]
+        glava = glava[0].strip()
         vrstice = vsiPodatki[1:]
+        
+        for i in range(len(vrstice)):
+            vrstica = vrstice[i][0].strip()
+            print(vrstica) #tukaj je zdej vsaka vrstica posebi okej, treba jih je dat nazaj v en seznam kot seznam seznamov, tega ne znam nardit, ker z append prideš spet na začetek...
+  
         for i in range(len(vrstice)):
             avtor = vrstice[i][1]
             vrstice[i][2]=int(vrstice[i][2])
