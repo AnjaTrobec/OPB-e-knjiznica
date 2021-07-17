@@ -27,9 +27,9 @@ def uvozi_knjigo(cur, tabela):
         glava = vsiPodatki[0]
         vrstice = vsiPodatki[1:]
         for i in range(len(vrstice)):
-            avtor_ = vrstice[i][1]
+            avtor = vrstice[i][1]
             vrstice[i][2]=int(vrstice[i][2])
-            cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", (avtor_,))
+            cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", (avtor,))
             try:
                 vrstice[i][2], = cur.fetchone()
             except:
