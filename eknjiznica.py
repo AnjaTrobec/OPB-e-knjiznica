@@ -292,6 +292,7 @@ def kupi_knjigo(id_knjige):
     kupljeno = cur.execute("SELECT * FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
     kupljeno = cur.fetchall()
     if kupljeno!=[]:
+        nastaviSporocilo('To knjigo že imate v svoji knjižnici!')
         redirect(url('moja_knjiznica_get'))
     else:
         cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
@@ -301,17 +302,21 @@ def kupi_knjigo(id_knjige):
         if oseba[6]=='basic': 
             krediti = 5 - st_knjig
             if krediti <= 0:
+                nastaviSporocilo('Prekoračili ste dovoljeno število kupljenih knjig! Pred nakupom nove morate vrniti eno izmed kupljenih.')
                 redirect(url('moja_knjiznica_get'))
             else:
                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
                 baza.commit()
+                nastaviSporocilo('Nakup je uspel!')
                 redirect(url('moja_knjiznica_get'))
         else:  
             krediti = 30 - st_knjig
             if krediti <= 0:
+                nastaviSporocilo('Vaša eKnjižnica je polna, pred nakupom nove morate vrniti eno izmed kupljenih.')
                 redirect(url('moja_knjiznica_get'))
             else:
                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
+                nastaviSporocilo('Nakup je uspel!')
                 baza.commit()
                 redirect(url('moja_knjiznica_get'))
 
@@ -358,6 +363,7 @@ def vrni_knjigo(id_knjige):
     id_uporabnika = oseba[1]
     cur = baza.cursor()
     cur.execute("""DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s""", (id_knjige, id_uporabnika, ))
+    nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za nakup nove.')
     baza.commit()
     redirect(url('moja_knjiznica_get'))
 
