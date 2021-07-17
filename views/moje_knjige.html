@@ -1,5 +1,5 @@
 % setdefault(napaka, '')
-% rebase('base.html', napaka = napaka, naslov = 'Moja e-Knjižnica')
+% rebase('base.html', napaka = napaka, krediti=krediti, naslov = 'Moja e-Knjižnica')
 <!-- % include('orodna_vrstica.html', povezava='/moje_knjige', napis="Išči", stolpci=[1,2,3]) -->
 
 %if knjige == []:
@@ -7,20 +7,35 @@
 %end
 
 %if knjige != []:
+
+    %if krediti > 0:
+
+    %else:
+        <h4> Nimate zadosti kreditov za izposojo nove knjige! Vrnite eno izmed knjig. </h4>
+    %end
+
 <table id="tabela" cellpadding="0" cellspacing="0" border="1">
     <tr>
         <th>ŠTEVILKA KNJIGE</th>
-        <th>AVTOR</th>
         <th>NASLOV</th>
+        <th>AVTOR</th>
+        <th>DATUM TRANSAKCIJE</th>
     </tr>
     
-%for (id_knjige, ime, naslov) in knjige:
+%for (id_knjige, naslov, avtor, datum) in knjige:
     <tr>
         <td>{{id_knjige}}</td>
-        <td>{{ime}}</td>
         <td>{{naslov}}</td>
+        <td>{{avtor}}</td>
+        <td>{{datum}}</td>
+        <td>
+            <form action="/knjiznica/vrni/{{id_knjige}}" method="post"> 
+                <a href="#" onclick="this.parentElement.submit()"> Vrni knijigo </a>
+            </form>
+        </td>
     </tr>
 %end
+
 
 </table>
 %end
