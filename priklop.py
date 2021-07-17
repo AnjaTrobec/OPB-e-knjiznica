@@ -25,18 +25,17 @@ def uvozi_knjigo(cur, tabela):
         podatki = csv.reader(csvfile, quotechar=';')
         vsiPodatki = [vrstica for vrstica in podatki]
         glava = vsiPodatki[0]
-        print(glava)
         vrstice = vsiPodatki[1:]
         for i in range(len(vrstice)):
-            avtor = vrstice[i][1]
+            avtor_ = vrstice[i][1]
             vrstice[i][2]=int(vrstice[i][2])
-            cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", [avtor])
+            cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", (avtor_,))
             try:
-                vrstice[i][1], = cur.fetchone()
+                vrstice[i][2], = cur.fetchone()
             except:
                 continue
         cur.executemany("""INSERT INTO {0} ({1}) VALUES ({2})""".format(
-        tabela, ",".join(glava), ",".join(['%s']*len(glava))), vrstice)
+        tabela, ";".join(glava), ";".join(['%s']*len(glava))), vrstice)
 
 with psycopg2.connect(database=dbname, host=host, user=user, password=password) as con:
     cur = con.cursor()
