@@ -135,12 +135,16 @@ def uporabnik():
     napaka = nastaviSporocilo()
     cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
     st_knjig = cur.fetchone()
+    st_knjig = st_knjig[0]
     krediti = 0
     if oseba[6]=='basic': 
-        krediti = 20
-    else:
-        krediti = 30
-    print (st_knjig)
+        krediti = 20 - st_knjig
+        if krediti < 0:
+            ValueError
+    else:   
+        krediti = 30 - st_knjig
+        if krediti < 0:
+            ValueError
     return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti = krediti)
 
 @get('/uporabnik/transakcije/<id_uporabnika>')
@@ -149,7 +153,7 @@ def transakcije_uporabnika(id_uporabnika):
     if oseba is None: 
         return
     napaka = nastaviSporocilo()
-    ukaz = ("""SELECT id_transakcije, id_uporabnika, knjige.naslov, knjige.cena_nakupa, knjige.cena_izposoje, avtor.ime, tip, datum FROM transakcija 
+    ukaz = ("""SELECT id_transakcije, id_uporabnika, knjige.naslov, knjige.cena_nakupa, avtor.ime, tip, datum FROM transakcija 
                 INNER JOIN knjige ON transakcija.id_knjige = knjige.id_knjige
                 INNER JOIN avtor ON knjige.id_avtorja = avtor.id_avtorja WHERE id_uporabnika = %s""")
     cur.execute(ukaz,(oseba[1], ))
@@ -270,7 +274,7 @@ def knjiznica_get():
     napaka = nastaviSporocilo()
     cur = baza.cursor()
     knjige = cur.execute("""
-        SELECT id_knjige, naslov, avtor.ime, cena_nakupa, cena_izposoje FROM knjige
+        SELECT id_knjige, naslov, avtor.ime, cena_nakupa FROM knjige
         INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
     """)
     knjige = cur.fetchall()
@@ -287,15 +291,15 @@ def kupi_knjigo(id_knjige):
     cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
     redirect(url('moja_knjiznica_get'))
 
-@post('/knjiznica/izposodi/<id_knjige>')
-def kupi_knjigo(id_knjige):
-    oseba = preveriUporabnika()
-    id_uporabnika = oseba[1]
-    today = date.today()
-    d1 = today.strftime("%d/%m/%Y")
-    cur = baza.cursor()
-    cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
-    redirect(url('moja_knjiznica_get'))
+# @post('/knjiznica/izposodi/<id_knjige>')
+# def kupi_knjigo(id_knjige):
+#     oseba = preveriUporabnika()
+#     id_uporabnika = oseba[1]
+#     today = date.today()
+#     d1 = today.strftime("%d/%m/%Y")
+#     cur = baza.cursor()
+#     cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
+#     redirect(url('moja_knjiznica_get'))
 
 
 #___________________________________________________________________________________________________________________________
@@ -311,7 +315,7 @@ def moja_knjiznica_get():
         INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
         WHERE id_knjige IN (
             SELECT id_knjige FROM transakcija
-            WHERE id_uporabnika = %s AND tip = 'nakup' OR tip = 'izposoja')""",(id_uporabnika,))
+            WHERE id_uporabnika = %s AND tip = 'nakup')""",(id_uporabnika,))
     k = cur.fetchall()
     return template('moje_knjige.html', napaka=napaka, knjige=k)
 

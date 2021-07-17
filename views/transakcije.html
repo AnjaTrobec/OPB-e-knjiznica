@@ -10,12 +10,12 @@
         <th>tip</th>
     </tr>
     
-    %for (id_transakcije, id_uporabnika, naslov, cena_nakupa, cena_izposoje, ime, tip, datum) in transakcija:
+    %for (id_transakcije, id_uporabnika, naslov, cena_nakupa, ime, tip, datum) in transakcija:
         <tr>
             <td>{{datum}}</td>
             <td>{{ime}}</td>
             <td>{{naslov}}</td>
-            <td>{{cena_nakupa}} {{cena_izposoje}}</td>
+            <td>{{cena_nakupa}}</td>
             <td>{{tip}}</td>
         </tr>
     %end
