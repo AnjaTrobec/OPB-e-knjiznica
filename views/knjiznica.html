@@ -1,6 +1,6 @@
 % setdefault(napaka, '')
 % rebase('base.html', napaka = napaka, naslov = 'Knjige')
-% include('orodna_vrstica.html', povezava='/knjiznica', napis="Išči", stolpci=[1,2,3,4])
+% include('orodna_vrstica.html', povezava='/knjiznica', napis="Išči", stolpci=[0,1,2])
 
 
 <table id="izpis" cellpadding="0" cellspacing="0" border="1">
@@ -8,23 +8,16 @@
         <th>ŠTEVILKA KNJIGE</th>
         <th>AVTOR</th>
         <th>NASLOV</th>
-        <th>CENA NAKUPA</th>
-        <th>CENA IZPOSOJE</th>
     </tr>
     
-    %for (id_knjige, naslov, id_avtorja, cena_nakupa, cena_izposoje) in knjige:
+    %for (id_knjige, naslov, id_avtorja, cena_nakupa) in knjige:
         <tr>
             <td>{{id_knjige}}</td>
             <td>{{id_avtorja}}</td>
             <td>{{naslov}}</td>
-            <td>{{cena_nakupa}} 
+            <td>
                 <form action="/knjiznica/kupi/{{id_knjige}}" method="post"> 
                     <a href="#" onclick="this.parentElement.submit()"> Kupi </a>
-                </form>
-            </td>
-            <td>{{cena_izposoje}}
-                <form action="/knjiznica/izposodi/{{id_knjige}}" method="post"> 
-                    <a href="#" onclick="this.parentElement.submit()"> Izposodi </a>
                 </form>
             </td>
         </tr>

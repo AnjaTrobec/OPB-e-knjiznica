@@ -352,38 +352,14 @@ def moja_knjiznica_get():
         krediti = 30 - st_knjig
     return template('moje_knjige.html', napaka=napaka, knjige=k, krediti = krediti)
 
-# @post('/knjiznica/vrni/<id_knjige>')
-# def vrni_knjigo(id_knjige):
-#     oseba = preveriUporabnika()
-#     id_uporabnika = oseba[1]
-#     today = date.today()
-#     d1 = today.strftime("%d/%m/%Y")
-#     cur = baza.cursor()
-#     kupljeno = cur.execute("SELECT * FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
-#     kupljeno = cur.fetchall()
-#     if kupljeno!=[]:
-#         redirect(url('moja_knjiznica_get'))
-#     else:
-#         cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
-#         st_knjig = cur.fetchone()
-#         st_knjig = st_knjig[0]
-#         krediti = 0
-#         if oseba[6]=='basic': 
-#             krediti = 5 - st_knjig
-#             if krediti <= 0:
-#                 redirect(url('moja_knjiznica_get'))
-#             else:
-#                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
-#                 baza.commit()
-#                 redirect(url('moja_knjiznica_get'))
-#         else:  
-#             krediti = 30 - st_knjig
-#             if krediti <= 0:
-#                 redirect(url('moja_knjiznica_get'))
-#             else:
-#                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
-#                 baza.commit()
-#                 redirect(url('moja_knjiznica_get'))
+@post('/knjiznica/vrni/<id_knjige>')
+def vrni_knjigo(id_knjige):
+    oseba = preveriUporabnika()
+    id_uporabnika = oseba[1]
+    cur = baza.cursor()
+    cur.execute("""DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s""", (id_knjige, id_uporabnika, ))
+    baza.commit()
+    redirect(url('moja_knjiznica_get'))
 
 # KAR JE BLO PREJ: SELECT id_knjige, naslov, avtor.ime FROM knjige
 #         INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
