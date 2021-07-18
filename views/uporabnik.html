@@ -3,7 +3,7 @@
 
 
 <h3>{{oseba[0]}} {{oseba[2]}}, pozdravljeni v eKnjižnici!</h3>
-<table style="text-align:center;">
+<table id="izpis" class = "table table-success table-striped">
             <div class="row">
                 <div class="col-md-6">
                     <label>Username</label>
@@ -48,20 +48,25 @@
                     %end
                 </div>
             </div>
-</table>
-<table>
-    <tr>
-        <td>
-            <a href="/knjiznica">Vstopi v e-Knjižnico</a>
-        </td>
+    
+            <div class="col py-2">
+                <a href="/knjiznica">
+                    <button type="button" class="btn btn-info">Vstopi v e-Knjižnico</button>
+                </a>
+            </div>
 
-    </tr>
-    <tr>
-        <td>
-            <a href="/moje_knjige">Moja e-Knjižnica</a>
-        </td>
-    </tr>   
+            <div class="col py-2">
+                <a href="/moje_knjige">
+                    <button type="button" class="btn btn-info">Moja e-Knjižnica</button>
+                </a>
+            </div>
 </table>
+
+
+
+
+
+
 
 
 

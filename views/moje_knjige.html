@@ -8,12 +8,13 @@
 
 %if knjige != []:
 
-<table id="tabela" cellpadding="0" cellspacing="0" border="1">
+<table id="tabela" class = "table table-success table-striped">
     <tr>
         <th>ŠTEVILKA KNJIGE</th>
         <th>NASLOV</th>
         <th>AVTOR</th>
         <th>DATUM TRANSAKCIJE</th>
+        <th></th>
     </tr>
     
 %for (id_knjige, naslov, avtor, datum) in knjige:

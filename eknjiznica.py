@@ -141,7 +141,7 @@ def uporabnik():
     if oseba[6]=='basic': 
         krediti = 5 - st_knjig
         if krediti < 0:
-            sporocilo='Nimate zadosti kreditov'
+            sporocilo='Število razpoložljivih kreditov je 0.'
     else:   
         krediti = 30 - st_knjig
         if krediti < 0:
