@@ -20,6 +20,38 @@ def uvoziCSV(cur, tabela):
         cur.executemany("INSERT INTO {0} ({1}) VALUES ({2})".format(
         tabela, ";".join(glava), ";".join(['%s']*len(glava))), vrstice)
 
+
+#STARO
+# def uvozi_knjigo(cur, tabela):
+#     with open('obdelani-podatki/{0}.csv'.format(tabela), encoding='utf-8') as csvfile:
+#         podatki = csv.reader(csvfile, delimiter=';')
+#         vsiPodatki = [vrstica for vrstica in podatki]
+#         glava = vsiPodatki[0]
+#         glava = glava[0].strip()
+#         vrstice = vsiPodatki[1:]
+#         vrstice1 = []
+#         for i in range(len(vrstice)):
+#             vrstica = vrstice[i][0].strip()
+#             vrstica = vrstica.split(';')
+#             vrstice1.append(vrstica)
+#         print(vrstice1)
+#         #print(len(vrstice1))
+# # do sem je zdej okej, te vrtice1 so zrihtane
+
+#         for i in range(len(vrstice1)):
+#             avtor = vrstice1[i][1] #problem, ker ločuje tudi po vejicah namesto samo po ;
+#             print(avtor)
+#             vrstice1[i][2]=int(vrstice1[i][2])
+#             cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", (avtor,))
+#             try:
+#                 vrstice1[i][2], = cur.fetchone()
+#             except:
+#                 continue
+#         cur.executemany("""INSERT INTO {0} ({1}) VALUES ({2})""".format(
+#         tabela, ",".join(glava), ",".join(['%s']*len(glava))), vrstice1)
+
+
+#NOVO
 def uvozi_knjigo(cur, tabela):
     with open('obdelani-podatki/{0}.csv'.format(tabela), encoding='utf-8') as csvfile:
         podatki = csv.reader(csvfile, delimiter=';')
@@ -27,19 +59,27 @@ def uvozi_knjigo(cur, tabela):
         glava = vsiPodatki[0]
         glava = glava[0].strip()
         vrstice = vsiPodatki[1:]
-        vrstice1 = []
+        
+        naslovi1 = []
+        avtorji1 = []
+        cena1 = []
         for i in range(len(vrstice)):
-            vrstica = vrstice[i][0].strip()
-            vrstica = vrstica.split(';')
-            vrstice1.append(vrstica)
-        #print(vrstice1)
-        #print(len(vrstice1))
-# do sem je zdej okej, te vrtice1 so zrihtane
+            naslovi = vrstice[i][0].strip()
+            naslovi = naslovi.split(';')
+            naslovi1.append(naslovi)
+        print(naslovi1)
+            avtorji = vrstice[i][1].strip()
+            avtorji = avtorji.split(';')
+            avtorji1.append(avtorji)
 
-        for i in range(len(vrstice1)):
-            avtor = vrstice1[i][1] #problem, ker ločuje tudi po vejicah namesto samo po ;
-            print(avtor)
-            vrstice1[i][2]=int(vrstice1[i][2])
+            cena = vrstice[i][0].strip()
+            cena = cena.split(';')
+            cena1.append(cena)
+
+        for i in range(len(vrstice)):
+            avtor = vrstice[i][1].strip()
+            avtor = avtor.split(';')
+            vrstice[i][2]=int(vrstice[i][2])
             cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", (avtor,))
             try:
                 vrstice1[i][2], = cur.fetchone()
