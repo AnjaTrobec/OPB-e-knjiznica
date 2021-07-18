@@ -148,70 +148,6 @@ def uporabnik():
             ValueError
     return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti = krediti, sporocilo=sporocilo)
 
-@get('/uporabnik/transakcije/<id_uporabnika>')
-def transakcije_uporabnika(id_uporabnika):
-    oseba = preveriUporabnika()
-    if oseba is None: 
-        return
-    napaka = nastaviSporocilo()
-    ukaz = ("""SELECT id_transakcije, id_uporabnika, knjige.naslov, knjige.cena_nakupa, avtor.ime, tip, datum FROM transakcija 
-                INNER JOIN knjige ON transakcija.id_knjige = knjige.id_knjige
-                INNER JOIN avtor ON knjige.id_avtorja = avtor.id_avtorja WHERE id_uporabnika = %s""")
-    cur.execute(ukaz,(oseba[1], ))
-    transakcije = cur.fetchall()
-    return template('uporabnik.html', oseba=oseba, transakcije=transakcije, napaka=napaka)
-
-# @post('/uporabnik/brisi/<id_uporabnika>')
-# def brisi_uporabnika(id_uporabnika):
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     cur = baza.cursor() 
-#     try:
-#         cur.execute("DELETE FROM uporabnik WHERE id_uporabnika = %s", (oseba[1], ))
-#     except:
-#         nastaviSporocilo('Brisanje ni bilo uspešno.') 
-#     redirect('/prijava')
-
-# @post('/uporabnik/dodaj') 
-# def dodaj_uporabnik_post():
-#      oseba = preveriUporabnika()
-#      if oseba is None: 
-#          return
-#      ime = request.forms.ime
-#      priimek = request.forms.priimek
-#      username = request.forms.username
-#      geslo = request.forms.geslo
-#      email = request.forms.email
-#      cur = baza.cursor()
-#      cur.execute("INSERT INTO oseba (ime, priimek, username, geslo, email) VALUES (%s, %s, %s, %s, %s)", 
-#           (ime, priimek, username, geslo, email))
-#      redirect('/uporabnik')
-
-
-# @get('/uporabnik/uredi/<username>')
-# def uredi_komitenta_get(username):
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     cur = baza.cursor()
-#     uporabnik = cur.execute("SELECT ime, priimek, username, geslo, email FROM uporabnik WHERE username = %s", (oseba[3],)).fetchone()
-#     return template('uporabnik-edit.html', uporabnik=uporabnik, naslov="Uredi uporabnika")
-
-# @post('/uporabnik/uredi/<username>')
-# def uredi_uporabnik_post(username):
-#     oseba = preveriUporabnika()
-#     if oseba is None: 
-#         return
-#     ime = request.forms.ime
-#     priimek = request.forms.priimek
-#     novi_username = request.forms.novi_username
-#     geslo = request.forms.geslo
-#     email = request.forms.email
-#     cur = baza.cursor()
-#     cur.execute("UPDATE oseba SET ime = %s, priimek = %s, novi_username = %s, geslo = %s, email = %s WHERE username = %s", 
-#          (ime, priimek, novi_username, geslo, email, username))
-#     redirect('/uporabnik')
 
 def preveri_za_uporabnika(username, email):
     try:
@@ -321,19 +257,6 @@ def kupi_knjigo(id_knjige):
                 redirect(url('moja_knjiznica_get'))
 
 
-
-
-# @post('/knjiznica/izposodi/<id_knjige>')
-# def kupi_knjigo(id_knjige):
-#     oseba = preveriUporabnika()
-#     id_uporabnika = oseba[1]
-#     today = date.today()
-#     d1 = today.strftime("%d/%m/%Y")
-#     cur = baza.cursor()
-#     cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
-#     redirect(url('moja_knjiznica_get'))
-
-
 #___________________________________________________________________________________________________________________________
 # UPORABNIKOVA IZBIRKA KNJIG
 @get('/moje_knjige')
@@ -366,31 +289,6 @@ def vrni_knjigo(id_knjige):
     nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za nakup nove.')
     baza.commit()
     redirect(url('moja_knjiznica_get'))
-
-# KAR JE BLO PREJ: SELECT id_knjige, naslov, avtor.ime FROM knjige
-#         INNER JOIN avtor ON avtor.id_avtorja = knjige.id_avtorja
-#         WHERE id_knjige IN (
-#             SELECT id_knjige FROM transakcija
-#             WHERE id_uporabnika = %s AND tip = 'nakup')
-
-# @post('/moje_knjige')
-# def moja_knjiznica_post():
-#     napaka = nastaviSporocilo()
-#     oseba = preveriUporabnika()
-#     id_uporabnika = oseba[1]
-#     cur = baza.cursor()
-#     cur.execute("SELECT id_knjige, tip, datum FROM transakcija WHERE id_uporabnika = %s", (id_uporabnika,))
-#     redirect('/uporabnik')
-    
-
-
-
-#___________________________________________________________________________________________________________________________
-#TRANSAKCIJE
-@get('/transakcije')
-def transakcija_get():
-    napaka = nastaviSporocilo()
-    return template('transakcije.html', napaka=napaka)
 
 
 #___________________________________________________________________________________________________________________________
