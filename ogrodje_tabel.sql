@@ -5,10 +5,10 @@
 -- DROP TABLE IF EXISTS knjige;
 
 
-    CREATE TABLE avtor (
-    id_avtorja SERIAL PRIMARY KEY,
-    ime TEXT NOT NULL
-);
+--     CREATE TABLE avtor (
+--     id_avtorja SERIAL PRIMARY KEY,
+--     ime TEXT NOT NULL
+-- );
     
 --     CREATE TABLE uporabnik (
 --         ime TEXT NOT NULL,
@@ -22,10 +22,10 @@
 
 
     CREATE TABLE knjige (
-        id_knjige SERIAL PRIMARY KEY,
-        naslov TEXT NOT NULL,
-        id_avtorja INTEGER REFERENCES avtor(id_avtorja),
-        cena_nakupa REAL
+    id_knjige SERIAL PRIMARY KEY,
+    naslov TEXT NOT NULL,
+    id_avtorja INTEGER REFERENCES avtor(id_avtorja),
+    cena_nakupa INTEGER
 );
 
 --     CREATE TABLE transakcija(
