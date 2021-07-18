@@ -39,7 +39,7 @@ def rtemplate(*largs, **kwargs):
 #ZAČETNA STRAN
 @get('/')
 def index():
-    redirect('/prijava')
+    redirect(url('prijava_get'))
 
 def nastaviSporocilo(sporocilo = None):
     staro = request.get_cookie("sporocilo", secret=skrivnost)
@@ -63,7 +63,7 @@ def preveriUporabnika():
             oseba = None
         if oseba: 
             return oseba
-    redirect('/prijava')
+    redirect(url('prijava_get'))
 
 def hashGesla(s):
     m = hashlib.sha256()
@@ -93,7 +93,7 @@ def prijava_post():
     geslo = request.forms.password
     if username is None or geslo is None:
         nastaviSporocilo('Uporabniško ime in geslo morata biti neprazna') 
-        redirect('/prijava')
+        redirect(url('prijava_get'))
     cur = baza.cursor()    
     hashBaza = None
     try: 
@@ -106,14 +106,14 @@ def prijava_post():
         print(x)
     if hashBaza is None:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
-        redirect('/prijava')
+        redirect(url('prijava_get'))
         return
     if geslo != hashBaza:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
-        redirect('/prijava')
+        redirect(url('prijava_get'))
         return
     response.set_cookie('username', username, secret=skrivnost)
-    redirect('/uporabnik')
+    redirect(url('uporabnik'))
 
 
 #___________________________________________________________________________________________________________________________
@@ -121,7 +121,7 @@ def prijava_post():
 @get('/odjava')
 def odjava_get():
     response.delete_cookie('username')
-    redirect('/prijava')
+    redirect(url('prijava_get'))
 
 
 #___________________________________________________________________________________________________________________________
@@ -143,9 +143,9 @@ def uporabnik():
         if krediti <= 0:
             sporocilo='Število razpoložljivih kreditov je 0.'
     else:   
-        krediti = 30 - st_knjig
+        krediti = 10 - st_knjig
         if krediti < 0:
-            ValueError
+            sporocilo='Število razpoložljivih kreditov je 0.'
     return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti = krediti, sporocilo=sporocilo)
 
 
@@ -238,21 +238,21 @@ def kupi_knjigo(id_knjige):
         if oseba[6]=='basic': 
             krediti = 5 - st_knjig
             if krediti <= 0:
-                nastaviSporocilo('Prekoračili ste dovoljeno število kupljenih knjig! Pred nakupom nove morate vrniti eno izmed kupljenih.')
+                nastaviSporocilo('Prekoračili ste dovoljeno število izposojenih knjig!')
                 redirect(url('moja_knjiznica_get'))
             else:
                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
                 baza.commit()
-                nastaviSporocilo('Nakup je uspel!')
+                nastaviSporocilo('Izposoja je uspela!')
                 redirect(url('moja_knjiznica_get'))
         else:  
-            krediti = 30 - st_knjig
+            krediti = 10 - st_knjig
             if krediti <= 0:
-                nastaviSporocilo('Vaša eKnjižnica je polna, pred nakupom nove morate vrniti eno izmed kupljenih.')
+                nastaviSporocilo('Vaša eKnjižnica je polna, pred izposojo nove morate vrniti eno izmed knjig.')
                 redirect(url('moja_knjiznica_get'))
             else:
                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
-                nastaviSporocilo('Nakup je uspel!')
+                nastaviSporocilo('Izposoja je uspela!')
                 baza.commit()
                 redirect(url('moja_knjiznica_get'))
 
@@ -277,7 +277,7 @@ def moja_knjiznica_get():
     if oseba[6]=='basic': 
         krediti = 5 - st_knjig
     else:
-        krediti = 30 - st_knjig
+        krediti = 8 - st_knjig
     return template('moje_knjige.html', napaka=napaka, knjige=k, krediti = krediti)
 
 @post('/knjiznica/vrni/<id_knjige>')
@@ -286,7 +286,7 @@ def vrni_knjigo(id_knjige):
     id_uporabnika = oseba[1]
     cur = baza.cursor()
     cur.execute("""DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s""", (id_knjige, id_uporabnika, ))
-    nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za nakup nove.')
+    nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za izposojo nove.')
     baza.commit()
     redirect(url('moja_knjiznica_get'))
 
