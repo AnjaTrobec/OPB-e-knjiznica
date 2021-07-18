@@ -21,12 +21,12 @@
 -- );
 
 
-    CREATE TABLE knjige (
-    id_knjige SERIAL PRIMARY KEY,
-    naslov TEXT NOT NULL,
-    id_avtorja INTEGER REFERENCES avtor(id_avtorja),
-    cena_nakupa INTEGER
-);
+--     CREATE TABLE knjige (
+--     id_knjige SERIAL PRIMARY KEY,
+--     naslov TEXT NOT NULL,
+--     id_avtorja INTEGER REFERENCES avtor(id_avtorja),
+--     cena_nakupa INTEGER
+-- );
 
 --     CREATE TABLE transakcija(
 --         id_transakcije SERIAL PRIMARY KEY,
@@ -34,9 +34,16 @@
 --         id_knjige INTEGER REFERENCES knjige (id_knjige),
 --         tip TEXT,
 --         datum DATE NOT NULL DEFAULT (datetime('now'))
-        
 --  );
 
+
+    CREATE TABLE vse_transakcije (
+    id_transakcije SERIAL PRIMARY KEY,
+    id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
+    id_knjige INTEGER REFERENCES knjige (id_knjige),
+    tip TEXT,
+    datum DATE NOT NULL
+);
 
 GRANT ALL ON DATABASE sem2021_anamarijab TO anjat;
 GRANT ALL ON SCHEMA public TO anjat;
