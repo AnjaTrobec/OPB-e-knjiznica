@@ -22,26 +22,31 @@ def uvoziCSV(cur, tabela):
 
 def uvozi_knjigo(cur, tabela):
     with open('obdelani-podatki/{0}.csv'.format(tabela), encoding='utf-8') as csvfile:
-        podatki = csv.reader(csvfile, quotechar=';')
+        podatki = csv.reader(csvfile, delimiter=';')
         vsiPodatki = [vrstica for vrstica in podatki]
         glava = vsiPodatki[0]
         glava = glava[0].strip()
         vrstice = vsiPodatki[1:]
-        
+        vrstice1 = []
         for i in range(len(vrstice)):
             vrstica = vrstice[i][0].strip()
-            print(vrstica) #tukaj je zdej vsaka vrstica posebi okej, treba jih je dat nazaj v en seznam kot seznam seznamov, tega ne znam nardit, ker z append prideš spet na začetek...
-  
-        for i in range(len(vrstice)):
-            avtor = vrstice[i][1]
-            vrstice[i][2]=int(vrstice[i][2])
+            vrstica = vrstica.split(';')
+            vrstice1.append(vrstica)
+        #print(vrstice1)
+        #print(len(vrstice1))
+# do sem je zdej okej, te vrtice1 so zrihtane
+
+        for i in range(len(vrstice1)):
+            avtor = vrstice1[i][1] #problem, ker ločuje tudi po vejicah namesto samo po ;
+            print(avtor)
+            vrstice1[i][2]=int(vrstice1[i][2])
             cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", (avtor,))
             try:
-                vrstice[i][2], = cur.fetchone()
+                vrstice1[i][2], = cur.fetchone()
             except:
                 continue
         cur.executemany("""INSERT INTO {0} ({1}) VALUES ({2})""".format(
-        tabela, ";".join(glava), ";".join(['%s']*len(glava))), vrstice)
+        tabela, ",".join(glava), ",".join(['%s']*len(glava))), vrstice1)
 
 with psycopg2.connect(database=dbname, host=host, user=user, password=password) as con:
     cur = con.cursor()
