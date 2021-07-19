@@ -99,11 +99,8 @@ def prijava_post():
     try: 
         cur.execute("SELECT geslo FROM uporabnik WHERE username = %s", (username, ))
         hashBaza, = cur.fetchone()
-        print(hashBaza)
-        print(geslo)
     except Exception as x:
         hashBaza = None
-        print(x)
     if hashBaza is None:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect(url('prijava_get'))
@@ -229,7 +226,8 @@ def kupi_knjigo(id_knjige):
                 nastaviSporocilo('Prekoračili ste dovoljeno število izposojenih knjig!')
                 redirect(url('moja_knjiznica_get'))
             else:
-                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
+                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
+                #cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
                 baza.commit()
                 nastaviSporocilo('Izposoja je uspela!')
                 redirect(url('moja_knjiznica_get'))
@@ -239,7 +237,8 @@ def kupi_knjigo(id_knjige):
                 nastaviSporocilo('Vaša eKnjižnica je polna, pred izposojo nove morate vrniti eno izmed knjig.')
                 redirect(url('moja_knjiznica_get'))
             else:
-                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'nakup', %s)", (id_uporabnika, id_knjige, d1))
+                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
+                #cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
                 nastaviSporocilo('Izposoja je uspela!')
                 baza.commit()
                 redirect(url('moja_knjiznica_get'))
@@ -273,7 +272,8 @@ def vrni_knjigo(id_knjige):
     oseba = preveriUporabnika()
     id_uporabnika = oseba[1]
     cur = baza.cursor()
-    cur.execute("""DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s""", (id_knjige, id_uporabnika, ))
+    cur.execute("DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
+    #cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'vračilo', 'now')", (id_uporabnika, id_knjige))
     nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za izposojo nove.')
     baza.commit()
     redirect(url('moja_knjiznica_get'))
