@@ -90,7 +90,7 @@ def prijava_get():
 @post('/prijava')
 def prijava_post():
     username = request.forms.username
-    geslo = request.forms.password
+    geslo = hashGesla(request.forms.password)
     if username is None or geslo is None:
         nastaviSporocilo('Uporabniško ime in geslo morata biti neprazna') 
         redirect(url('prijava_get'))
@@ -148,17 +148,6 @@ def uporabnik():
             sporocilo='Število razpoložljivih kreditov je 0.'
     return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti = krediti, sporocilo=sporocilo)
 
-
-def preveri_za_uporabnika(username, email):
-    try:
-        cur.execute("SELECT username, email FROM uporabnik WHERE username, email = %s, %s", (username, email))
-        uporabnik = cur.fetchone()
-        if uporabnik==None:
-            return True
-        else:
-            return False
-    except:
-        return False
     
 #___________________________________________________________________________________________________________________________
 # REGISTRACIJA
@@ -198,9 +187,8 @@ def registracija_post():
 
     #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
-    cur.execute("UPDATE uporabnik SET geslo = %s WHERE username = %s", (zgostitev, username))
     response.set_cookie('username', username, secret=skrivnost)
-    cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, password, email, subscription))
+    cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, zgostitev, email, subscription))
     baza.commit()
     redirect(url('uporabnik'))
 
