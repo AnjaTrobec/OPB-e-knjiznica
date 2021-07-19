@@ -277,7 +277,7 @@ def moja_knjiznica_get():
     if oseba[6]=='basic': 
         krediti = 5 - st_knjig
     else:
-        krediti = 8 - st_knjig
+        krediti = 10 - st_knjig
     return template('moje_knjige.html', napaka=napaka, knjige=k, krediti = krediti)
 
 @post('/knjiznica/vrni/<id_knjige>')

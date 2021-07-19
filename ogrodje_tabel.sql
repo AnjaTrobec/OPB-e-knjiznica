@@ -37,13 +37,6 @@
 --  );
 
 
-    CREATE TABLE vse_transakcije (
-    id_transakcije SERIAL PRIMARY KEY,
-    id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
-    id_knjige INTEGER REFERENCES knjige (id_knjige),
-    tip TEXT,
-    datum DATE NOT NULL
-);
 
 GRANT ALL ON DATABASE sem2021_anamarijab TO anjat;
 GRANT ALL ON SCHEMA public TO anjat;
