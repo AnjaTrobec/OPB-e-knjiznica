@@ -2,7 +2,7 @@
 % setdefault('naslov', 'Prijava')
 % rebase('base.html', napaka=napaka, naslov=naslov)
 
-<form action="/prijava" method="post" autocomplete="off">
+<form action="{{url('prijava_post')}}" method="post" autocomplete="off">
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="username">Uporabniško ime</label>
@@ -30,7 +30,7 @@
 </form>
 
 
-<form action="/registracija" method="get">  
+<form action="{{url('registracija_get')}}" method="get">  
   <div class="form-row col"></div>
     <p>Še nimaš uporabniškega računa?
     <button class="btn btn-secondary" type="submit">

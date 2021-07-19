@@ -24,7 +24,7 @@
         <td>{{avtor}}</td>
         <td>{{datum}}</td>
         <td>
-            <form action="/knjiznica/vrni/{{id_knjige}}" method="post"> 
+            <form action="{{url('vrni_knjigo', id_knjige=id_knjige}}" method="post"> 
                 <a href="#" onclick="this.parentElement.submit()"> Vrni knijigo </a>
             </form>
         </td>

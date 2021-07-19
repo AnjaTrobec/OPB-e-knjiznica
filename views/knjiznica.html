@@ -17,7 +17,7 @@
             <td>{{id_avtorja}}</td>
             <td>{{naslov}}</td>
             <td>
-                <form action="/knjiznica/kupi/{{id_knjige}}" method="post"> 
+                <form action="{{url('vrni_knjigo', id_knjige=id_knjige}}" method="post"> 
                     <a href="#" onclick="this.parentElement.submit()"> Izposodi </a>
                 </form>
             </td>
