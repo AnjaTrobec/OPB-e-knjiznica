@@ -19,7 +19,7 @@ from datetime import date
 #Privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
 RELOADER = os.environ.get('BOTTLE_RELOADER', True)
-ROOT = os.environ.get('BOTTLE_ROOT', '/')
+ROOT = os.environ.get('BOTTLE_ROOT', '/') #Change this file to automatically refresh the Bottle server
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 # Odkomentiraj, če želiš sporočila o napakah
@@ -185,6 +185,9 @@ def registracija_post():
     #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
     response.set_cookie('username', username, secret=skrivnost)
+    response.set_cookie('ime', ime, secret=skrivnost)
+    response.set_cookie('priimek', priimek, secret=skrivnost)
+    response.set_cookie('email', email, secret=skrivnost)
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, zgostitev, email, subscription))
     baza.commit()
     redirect(url('uporabnik'))
@@ -282,7 +285,6 @@ def vrni_knjigo(id_knjige):
 #___________________________________________________________________________________________________________________________
 #POVEZAVA NA BAZO
 baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
-# baza.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 #Požnemo strežnik na podanih vratih
