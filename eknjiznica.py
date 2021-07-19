@@ -253,8 +253,8 @@ def moja_knjiznica_get():
     id_uporabnika = oseba[1]
     cur = baza.cursor()
     k = cur.execute("""SELECT knjige.id_knjige, knjige.naslov, avtor.ime, datum FROM transakcija 
-                        INNER JOIN knjige ON transakcija.id_knjige = knjige.id_knjige
-                        INNER JOIN avtor ON knjige.id_avtorja = avtor.id_avtorja
+                        JOIN knjige ON transakcija.id_knjige = knjige.id_knjige
+                        JOIN avtor ON knjige.id_avtorja = avtor.id_avtorja
                         WHERE id_uporabnika=%s""",(id_uporabnika,))
     k = cur.fetchall()
     st_knjig = cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
@@ -273,7 +273,7 @@ def vrni_knjigo(id_knjige):
     id_uporabnika = oseba[1]
     cur = baza.cursor()
     cur.execute("DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
-    #cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'vračilo', 'now')", (id_uporabnika, id_knjige))
+    # cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'vračilo', 'now')", (id_uporabnika, id_knjige))
     nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za izposojo nove.')
     baza.commit()
     redirect(url('moja_knjiznica_get'))
