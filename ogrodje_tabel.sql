@@ -31,9 +31,9 @@ DROP TABLE IF EXISTS knjige;
     CREATE TABLE transakcija(
         id_transakcije SERIAL PRIMARY KEY,
         id_uporabnika INTEGER REFERENCES uporabnik (id_uporabnika),
-        id_knjige INTEGER FOREIGN KEY REFERENCES knjige (id_knjige),
+        id_knjige INTEGER REFERENCES knjige (id_knjige), 
         tip TEXT,
-        datum DATE NOT NULL DEFAULT (datetime('now'))
+        datum DATE NOT NULL DEFAULT ('now')
  );
 
     CREATE TABLE vse_transakcije(

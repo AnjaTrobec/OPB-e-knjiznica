@@ -185,9 +185,6 @@ def registracija_post():
     #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
     response.set_cookie('username', username, secret=skrivnost)
-    response.set_cookie('ime', ime, secret=skrivnost)
-    response.set_cookie('priimek', priimek, secret=skrivnost)
-    response.set_cookie('email', email, secret=skrivnost)
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, zgostitev, email, subscription))
     baza.commit()
     redirect(url('uporabnik'))
