@@ -7,7 +7,8 @@ import csv
 
 from auth import *
 
-#UVOZ SQL SKRIPTE
+#UVOZ SQL SKRIPTE, ustvarimo datoteko eknjiznica.db
+
 def uvoziSQL(cur, datoteka):
     with open(datoteka) as f:
         skripta = f.read()
@@ -28,7 +29,7 @@ def uvozi_knjigo(cur, tabela):
         glava = next(podatki)
 
         # pripravi predlogo za vstavljanje stolpcev
-        stolpci = '(%s)' % ', '.join(['{}'] * len(glava))
+        stolpci = '(%s)' % ','.join(['{}'] * len(glava))
         
         # pripravi predlogo za vstavljanje podatkov
         vrednosti = '(%s)' % ', '.join(['%s'] * len(glava))
@@ -43,7 +44,7 @@ def uvozi_knjigo(cur, tabela):
             avtor = vrstica[1]
             cur.execute("""SELECT id_avtorja FROM avtor WHERE ime = %s""", [avtor])
             try:
-                vrstica[1], =cur.fetchone()
+                vrstica[1], = cur.fetchone()
             except:
                 continue
 

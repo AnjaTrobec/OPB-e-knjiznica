@@ -1,25 +1,27 @@
-#uvoz Bottla
+#Uvoz Bottla, knjižnica za izdelavo spletne strani
 from re import TEMPLATE
 from bottleext import *
 
-#uvoz podatkov za povezavo
+#Uvoz podatkov za povezavo na bazo
 import auth_public as auth
 
-#Uvoz psycopg2
+#Uvoz psycopg2 za priklop na bazo
 import psycopg2, psycopg2.extensions, psycopg2.extras 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
+#Uvoz knjižnice za hashiranje gesel
 import hashlib
+
 
 from datetime import date
 
 
 # KONFIGURACIJA
 
-#Privzete nastavitve
+#Privzete nastavitve za Bottle
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
 RELOADER = os.environ.get('BOTTLE_RELOADER', True)
-ROOT = os.environ.get('BOTTLE_ROOT', '/') #Change this file to automatically refresh the Bottle server
+ROOT = os.environ.get('BOTTLE_ROOT', '/') 
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 # Odkomentiraj, če želiš sporočila o napakah
@@ -27,6 +29,7 @@ debug(True)  # za izpise v terminalu, pomaga pri iskanju
 
 
 #___________________________________________________________________________________________________________________________
+
 #FUNKCIJE
 def rtemplate(*largs, **kwargs):
     """
@@ -53,12 +56,12 @@ def nastaviSporocilo(sporocilo = None):
 def preveriUporabnika(): 
     username = request.get_cookie("username", secret=skrivnost)
     if username:
-        cur = baza.cursor()    
+        cur = baza.cursor() #odzivnik za pregledovanje poizvedbe  
         oseba = None
         try: 
             cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, ))
-            oseba = cur.fetchone()
-            print(oseba)  #v oseba se shranijo vsi podatki o uporabniku
+            oseba = cur.fetchone() #kurzor vrne podatke o osebi, ki jo najde v bazi pod usernamom
+            print(oseba) #v oseba se shranijo vsi podatki o uporabniku
         except:
             oseba = None
         if oseba: 
@@ -286,5 +289,5 @@ def vrni_knjigo(id_knjige):
 baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, password=auth.password, port = DB_PORT)
 cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-#Požnemo strežnik na podanih vratih
+#Požnemo strežnik
 run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
