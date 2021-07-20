@@ -35,9 +35,9 @@ debug(True)  # za podrobnejše izpise v terminalu, pomaga pri iskanju napak
 def nastaviSporocilo(sporocilo = None):
     staro = request.get_cookie("sporocilo", secret=skrivnost)
     if sporocilo is None:
-        response.delete_cookie('sporocilo')
+        response.delete_cookie('sporocilo', path="/")
     else:
-        response.set_cookie('sporocilo', sporocilo, secret=skrivnost)
+        response.set_cookie('sporocilo', sporocilo, path="/", secret=skrivnost)
     return staro 
 
 # preveriUporabnika pogleda, če je uporabnik prijavljen oz. njegov cookie shranjen, če ne ga ne spusti mimo
@@ -105,7 +105,7 @@ def prijava_post():
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect(url('prijava_get'))
         return
-    response.set_cookie('username', username, secret=skrivnost)
+    response.set_cookie('username', username, path="/", secret=skrivnost)
     redirect(url('uporabnik'))
 
 
@@ -113,7 +113,7 @@ def prijava_post():
 #ODJAVA
 @get('/odjava')
 def odjava_get():
-    response.delete_cookie('username')
+    response.delete_cookie('username', path="/")
     redirect(url('prijava_get'))
 
 
@@ -180,7 +180,7 @@ def registracija_post():
 
     #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
-    response.set_cookie('username', username, secret=skrivnost) #vemo, da je oseba registrirana in jo kar prijavimo
+    response.set_cookie('username', username, path="/", secret=skrivnost) #vemo, da je oseba registrirana in jo kar prijavimo
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, zgostitev, email, subscription))
     baza.commit()
     redirect(url('uporabnik'))
