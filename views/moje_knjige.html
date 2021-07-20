@@ -8,7 +8,10 @@
 
 %if knjige != []:
 <h5> Število preostalih kreditov: {{krediti}} </h5>
+
 % include('orodna_vrstica.html', povezava='/moje_knjige', napis="Išči", stolpci=[1,2])
+
+
 <table id="izpis" class = "table table-success table-striped">
     <tr>
         <th>ŠTEVILKA KNJIGE</th>
@@ -25,7 +28,7 @@
         <td>{{avtor}}</td>
         <td>{{datum}}</td>
         <td>
-            <form action="/knjiznica/vrni/{{id_knjige}}" method="post"> 
+            <form action="{{url('vrni_knjigo', id_knjige=id_knjige)}}" method="post"> 
                 <a href="#" onclick="this.parentElement.submit()"> Vrni knijigo </a>
             </form>
         </td>
