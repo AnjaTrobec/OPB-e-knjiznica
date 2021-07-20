@@ -26,7 +26,7 @@ DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 
 debug(True)  # za podrobnejše izpise v terminalu, pomaga pri iskanju napak
-#
+
 #__________________________________________________________________________________________________________
 #FUNKCIJE
 
@@ -200,8 +200,6 @@ def knjiznica_get():
 def kupi_knjigo(id_knjige):
     oseba = preveriUporabnika()
     id_uporabnika = oseba[1]
-    today = date.today()
-    d1 = today.strftime("%d/%m/%Y")
     cur = baza.cursor()
     kupljeno = cur.execute("SELECT * FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
     kupljeno = cur.fetchall()
@@ -221,8 +219,8 @@ def kupi_knjigo(id_knjige):
                 nastaviSporocilo('Vaša e-knjižnica je polna. Izposoja ni uspela.')
                 redirect(url('moja_knjiznica_get'))
             else:
-                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
-                cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
+                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', 'now')", (id_uporabnika, id_knjige))
+                cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', 'now')", (id_uporabnika, id_knjige))
                 baza.commit()
                 nastaviSporocilo('Izposoja je uspela!')
                 redirect(url('moja_knjiznica_get'))
@@ -232,8 +230,8 @@ def kupi_knjigo(id_knjige):
                 nastaviSporocilo('Vaša e-knjižnica je polna. Izposoja ni uspela.')
                 redirect(url('moja_knjiznica_get'))
             else:
-                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
-                cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
+                cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', 'now')", (id_uporabnika, id_knjige))
+                cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', 'now')", (id_uporabnika, id_knjige))
                 nastaviSporocilo('Izposoja je uspela!')
                 baza.commit()
                 redirect(url('moja_knjiznica_get'))
