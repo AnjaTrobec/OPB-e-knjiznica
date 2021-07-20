@@ -35,9 +35,9 @@ debug(True)  # za podrobnejše izpise v terminalu, pomaga pri iskanju napak
 def nastaviSporocilo(sporocilo = None):
     staro = request.get_cookie("sporocilo", secret=skrivnost)
     if sporocilo is None:
-        response.delete_cookie('sporocilo', path="/")
+        response.delete_cookie('sporocilo')
     else:
-        response.set_cookie('sporocilo', sporocilo, path="/", secret=skrivnost)
+        response.set_cookie('sporocilo', sporocilo, secret=skrivnost)
     return staro 
 
 # preveriUporabnika pogleda, če je uporabnik prijavljen oz. njegov cookie shranjen, če ne ga ne spusti mimo
@@ -113,7 +113,7 @@ def prijava_post():
 #ODJAVA
 @get('/odjava')
 def odjava_get():
-    response.delete_cookie('username', path="/")
+    response.delete_cookie('username')
     redirect(url('prijava_get'))
 
 
