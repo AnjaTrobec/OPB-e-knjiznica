@@ -14,17 +14,21 @@
         <script src="{{url('static', filename='knjiznica.js')}}"></script>  <!-- povezava na javascript-->
     </head>
     <body>
+        <!-- orodna vrstica-->
         <nav class="navbar navbar-light" style="background-color: #bee7f1c2;">
             <div class="container">
                 <a class="navbar-brand" href="/knjiznica">
                     <img src="{{url('static', filename= '/img/logo.png')}}" alt="" width="270" height="70">
                 </a>
                 <a href="{{url('uporabnik')}}" class="text-dark">Profil</a>
+                <a href="{{url('moja_knjiznica_get')}}" class="text-dark">Moja e-knjižnica</a>
                 <a href="{{url('odjava_get')}}" class="text-dark">Odjava</a>
             </div>                
         </nav>
-
-        <div class="container">
+        
+        
+        <!--sem notri vstavimo ostale htmlje-->
+        <div class="container">  <!--div se vedno razširi čez cel blok, zato damo container, da zavzame optimalno prostora-->
 
             <h2 class="my-4">{{naslov}}</h2>
 
@@ -36,6 +40,8 @@
 
             {{!base}}
         </div>
+
+
 
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->

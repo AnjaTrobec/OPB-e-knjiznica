@@ -2,8 +2,8 @@
 
 'use strict'
 function isci(stolpci = [1]) {
-  let vrednost = document.getElementById('isci').value;
-  let tabela = document.getElementById('izpis');
+  let vrednost = document.getElementById('isci').value;  //vpisana vrednost v iskalniku
+  let tabela = document.getElementById('izpis');    //
   [...tabela.rows].forEach(vrstica => {           //lambda funkcija brez imena 
       if(stolpci.some(stolpec => seUjema(vrstica, stolpec, vrednost))) {
         vrstica.style.display = ''

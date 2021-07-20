@@ -1,13 +1,14 @@
 % setdefault(napaka, '')
-% rebase('base.html', napaka = napaka, krediti=krediti, naslov = 'Moja e-Knjižnica')
-% include('orodna_vrstica.html', povezava='/moje_knjige', napis="Išči", stolpci=[1,2])
+% rebase('base.html', napaka = napaka, krediti=krediti, naslov = 'Moja e-knjižnica')
+
 
 %if knjige == []:
-<h2> Vaša eKnjižnica je prazna. </h2>
+<h3> Vaša e-knjižnica je prazna. </h3>
 %end
 
 %if knjige != []:
 <h5> Število preostalih kreditov: {{krediti}} </h5>
+% include('orodna_vrstica.html', povezava='/moje_knjige', napis="Išči", stolpci=[1,2])
 <table id="izpis" class = "table table-success table-striped">
     <tr>
         <th>ŠTEVILKA KNJIGE</th>

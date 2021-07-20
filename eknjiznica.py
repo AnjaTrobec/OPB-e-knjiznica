@@ -24,25 +24,11 @@ RELOADER = os.environ.get('BOTTLE_RELOADER', True)
 ROOT = os.environ.get('BOTTLE_ROOT', '/') 
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
-# Odkomentiraj, če želiš sporočila o napakah
-debug(True)  # za izpise v terminalu, pomaga pri iskanju
 
-
-#___________________________________________________________________________________________________________________________
-
+debug(True)  # za podrobnejše izpise v terminalu, pomaga pri iskanju napak
+#
+#__________________________________________________________________________________________________________
 #FUNKCIJE
-def rtemplate(*largs, **kwargs):
-    """
-    Izpis predloge s podajanjem spremenljivke ROOT z osnovnim URL-jem.
-    """
-    return template(ROOT=ROOT, *largs, **kwargs)
-
-
-#___________________________________________________________________________________________________________________________
-#ZAČETNA STRAN
-@get('/')
-def index():
-    redirect(url('prijava_get'))
 
 def nastaviSporocilo(sporocilo = None):
     staro = request.get_cookie("sporocilo", secret=skrivnost)
@@ -56,12 +42,11 @@ def nastaviSporocilo(sporocilo = None):
 def preveriUporabnika(): 
     username = request.get_cookie("username", secret=skrivnost)
     if username:
-        cur = baza.cursor() #odzivnik za pregledovanje poizvedbe  
+        cur = baza.cursor()
         oseba = None
         try: 
             cur.execute("SELECT * FROM uporabnik WHERE username = %s", (username, ))
-            oseba = cur.fetchone() #kurzor vrne podatke o osebi, ki jo najde v bazi pod usernamom
-            print(oseba) #v oseba se shranijo vsi podatki o uporabniku
+            oseba = cur.fetchone()
         except:
             oseba = None
         if oseba: 
@@ -82,6 +67,11 @@ skrivnost = "rODX3ulHw3ZYRdbIVcp1IfJTDn8iQTH6TFaNBgrSkjIulr"
 def static(filename):
     return static_file(filename, root=static_dir)
 
+#___________________________________________________________________________________________________________________________
+#ZAČETNA STRAN
+@get('/')
+def index():
+    redirect(url('prijava_get'))
 
 #___________________________________________________________________________________________________________________________
 #PRIJAVA
@@ -98,17 +88,17 @@ def prijava_post():
         nastaviSporocilo('Uporabniško ime in geslo morata biti neprazna') 
         redirect(url('prijava_get'))
     cur = baza.cursor()    
-    hashBaza = None
+    hgeslo = None
     try: 
         cur.execute("SELECT geslo FROM uporabnik WHERE username = %s", (username, ))
-        hashBaza, = cur.fetchone()
-    except Exception as x:
-        hashBaza = None
-    if hashBaza is None:
+        hgeslo, = cur.fetchone()
+    except:
+        hgeslo = None
+    if hgeslo is None:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect(url('prijava_get'))
         return
-    if geslo != hashBaza:
+    if geslo != hgeslo:
         nastaviSporocilo('Uporabniško ime ali geslo nista ustrezni') 
         redirect(url('prijava_get'))
         return
@@ -228,7 +218,7 @@ def kupi_knjigo(id_knjige):
         if oseba[6]=='basic': 
             krediti = 5 - st_knjig
             if krediti <= 0:
-                nastaviSporocilo('Prekoračili ste dovoljeno število izposojenih knjig!')
+                nastaviSporocilo('Vaša e-knjižnica je polna. Izposoja ni uspela.')
                 redirect(url('moja_knjiznica_get'))
             else:
                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
@@ -239,7 +229,7 @@ def kupi_knjigo(id_knjige):
         else:  
             krediti = 10 - st_knjig
             if krediti <= 0:
-                nastaviSporocilo('Vaša eKnjižnica je polna, pred izposojo nove morate vrniti eno izmed knjig.')
+                nastaviSporocilo('Vaša e-knjižnica je polna. Izposoja ni uspela.')
                 redirect(url('moja_knjiznica_get'))
             else:
                 cur.execute("INSERT INTO transakcija (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'izposoja', %s)", (id_uporabnika, id_knjige, d1))
@@ -279,7 +269,7 @@ def vrni_knjigo(id_knjige):
     cur = baza.cursor()
     cur.execute("DELETE FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
     cur.execute("INSERT INTO vse_transakcije (id_uporabnika, id_knjige, tip, datum) VALUES (%s, %s, 'vračilo', 'now')", (id_uporabnika, id_knjige))
-    nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v eKnjižnico za izposojo nove.')
+    nastaviSporocilo('Knjigo ste uspešno vrnili. Vstopite v e-knjižnico za izposojo nove.')
     baza.commit()
     redirect(url('moja_knjiznica_get'))
 
