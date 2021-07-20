@@ -30,14 +30,17 @@ debug(True)  # za podrobnejše izpise v terminalu, pomaga pri iskanju napak
 #__________________________________________________________________________________________________________
 #FUNKCIJE
 
+#če je naslednje sporočilo prazno, izbrišemo cookie, sicer nastavimo novega (skrbimo, da sporočilo izgine)
+
 def nastaviSporocilo(sporocilo = None):
     staro = request.get_cookie("sporocilo", secret=skrivnost)
     if sporocilo is None:
-        response.delete_cookie('sporocilo')
+        response.delete_cookie('sporocilo', path="/")
     else:
         response.set_cookie('sporocilo', sporocilo, path="/", secret=skrivnost)
     return staro 
 
+# preveriUporabnika pogleda, če je uporabnik prijavljen oz. njegov cookie shranjen, če ne ga ne spusti mimo
 
 def preveriUporabnika(): 
     username = request.get_cookie("username", secret=skrivnost)
@@ -110,7 +113,7 @@ def prijava_post():
 #ODJAVA
 @get('/odjava')
 def odjava_get():
-    response.delete_cookie('username')
+    response.delete_cookie('username', path="/")
     redirect(url('prijava_get'))
 
 
@@ -123,7 +126,7 @@ def uporabnik():
     if oseba is None: 
         return
     napaka = nastaviSporocilo()
-    cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
+    cur.execute("SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s", (oseba[1], ))
     st_knjig = cur.fetchone()
     st_knjig = st_knjig[0]
     krediti = 0
@@ -136,7 +139,7 @@ def uporabnik():
         krediti = 10 - st_knjig
         if krediti < 0:
             sporocilo='Število razpoložljivih kreditov je 0.'
-    return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti = krediti, sporocilo=sporocilo)
+    return template('uporabnik.html', oseba=oseba, napaka=napaka, krediti=krediti, sporocilo=sporocilo)
 
     
 #___________________________________________________________________________________________________________________________
@@ -177,7 +180,7 @@ def registracija_post():
 
     #ce pridemo, do sem, je vse uredu in lahko vnesemo zahtevek v bazo
     zgostitev = hashGesla(password)
-    response.set_cookie('username', username, secret=skrivnost)
+    response.set_cookie('username', username, secret=skrivnost) #vemo, da je oseba registrirana in jo kar prijavimo
     cur.execute("INSERT INTO uporabnik (ime, priimek, username, geslo, email, narocnina) VALUES (%s, %s, %s, %s, %s, %s)", (ime, priimek, username, zgostitev, email, subscription))
     baza.commit()
     redirect(url('uporabnik'))
@@ -186,6 +189,7 @@ def registracija_post():
 # KNJIŽNICA
 @get('/knjiznica')
 def knjiznica_get():
+    oseba = preveriUporabnika()
     napaka = nastaviSporocilo()
     cur = baza.cursor()
     knjige = cur.execute("""
@@ -201,6 +205,7 @@ def kupi_knjigo(id_knjige):
     oseba = preveriUporabnika()
     id_uporabnika = oseba[1]
     cur = baza.cursor()
+
     kupljeno = cur.execute("SELECT * FROM transakcija WHERE id_knjige=%s AND id_uporabnika=%s", (id_knjige, id_uporabnika, ))
     kupljeno = cur.fetchall()
 
@@ -208,7 +213,7 @@ def kupi_knjigo(id_knjige):
         nastaviSporocilo('To knjigo že imate v svoji knjižnici!')
         redirect(url('moja_knjiznica_get'))
     else:
-        cur.execute("""SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s""", (oseba[1], ))
+        cur.execute("SELECT COUNT (*) FROM transakcija WHERE id_uporabnika=%s", (oseba[1], ))
         st_knjig = cur.fetchone()
         st_knjig = st_knjig[0]
         krediti = 0
@@ -278,4 +283,4 @@ baza = psycopg2.connect(database=auth.dbname, host=auth.host, user=auth.user, pa
 cur = baza.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 #Požnemo strežnik
-run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (ozveževanje sproti - razvoj)
+run(host='localhost', port=SERVER_PORT, reloader=RELOADER) # reloader=True nam olajša razvoj (osveževanje sproti - razvoj)
